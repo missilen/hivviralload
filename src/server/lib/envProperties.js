@@ -1,12 +1,14 @@
 //LOCAL
-
 module.exports = {
-  MONGO_DOMAIN: 'mongodb://localhost:27017/commsphere',
-
-  FACEBOOK_ID:      '1429109474024840',
-  FACEBOOK_SECRET:  '71ce33ce1aaa2da3d859d78a3848c164',
-  FACEBOOK_CALLBACK: 'http://localhost:8089/apollo/auth/facebook/callback',
-
-  //ACCESS_LOG: '/apollologs/access_log'
+    MONGO_DOMAIN: 'mongodb://localhost:27017/commsphere',
+    mysqlhost: '127.0.0.1',
+    mysqluser: 'iiuopenmrs',
+    mysqlpassword: 'OpenMRSWiz1!',
+    mysqldatabase: 'hiv_lab_track',
+    imagePath : '/ec2/hivlabtrack',
+    USESSL : 'false',
+    SSL_CERT:  './server/utilities/cert.pem',
+    SSL_KEY:  './server/utilities/key.pem',
+    SSL_BUNDLE: './server/utilities/gd_bundle-g2.crt'
 
 };
