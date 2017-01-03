@@ -1,0 +1,96 @@
+div(ng-controller='previewReportCtrl' style='background-color:#f2f2f2; width:750px; float:right;')
+	.modal-content
+		.modal-header.header_dark(style='background-color:#eeeeee;')
+			.row
+				.col-lg-12
+					.create-new-event-cont
+						h2.h2-create-new
+							|  Preview Report
+					.create-btn-cont
+						button.btn.btn-danger(type='button' ng-click='makePDF()')
+							span.glyphicon.glyphicon-save
+							|  Export PDF
+					.save-draft-cont(style='position:absolute; float:left; margin-left:-30px;')
+						button.btn.btn-default.btn-circle.glyphicon.glyphicon-remove(type='button' ng-click='cancel()')			
+		.modal-body#printThis
+			.row
+				.col-lg-12.col-md-12.col-sm-12
+					.report-wrapper
+						h4.preview-report-title {{customizedDoc.reportMeta.title}}
+						h4.preview-report-headers {{customizedDoc.reportMeta.type}} 
+						h4.preview-report-headers {{eventdoc.eventPublishDate | date:'longDate'}}
+						br
+						br
+						div(ng-repeat='section in customizedDoc.docData')
+							h4.report-cat-title(ng-if='section.sectionType=="Document"')
+								| {{section.sectionName}}
+							div(ng-repeat='category in section.sectionData.doc.categories' ng-if='section.sectionType == "Document"') 
+								h4.report-category(ng-if='category.checked')
+									| {{category.name}}
+								div(ng-repeat='topic in category.topics' ng-if='topic.checked')
+									h4.report-topic
+										| {{topic.name}}
+									ul
+										li(ng-repeat='topicBullets in topic.bullets' ng-if='topicBullets.checked') 
+											| {{topicBullets.name}}
+											ul
+												li(ng-repeat='topicSubBullets in topicBullets.subBullets' ng-if='topicSubBullets.checked')
+													| {{topicSubBullets.name}}
+									div(ng-repeat='subtopic in topic.subTopics' ng-if='subtopic.checked')
+										h4.report-sub-topic
+											| {{subtopic.name}}
+										ul
+											li(ng-repeat='bullet in subtopic.bullets' ng-if='bullet.checked') 
+												| {{bullet.name}}
+												ul
+													li(ng-repeat='subBullet in bullet.subBullets' ng-if='subBullet.checked') 
+														| {{subBullet.name}}
+							div(ng-if='section.sectionType == "Metrics"')
+								.row
+									.col-lg-12
+										table(style="margin-bottom:0px;", border="1")
+											tr#metric-table-row
+												td(rowspan="4")
+													| &nbsp;
+												td.report-table-daily-metrics(colspan="{{numberOfColumns}}")
+													| Daily Metrics
+											tr#metric-table-row
+												td.report-table-percent-change(colspan="{{numberOfColumns}}")
+													| Percent change from previous day is given in parentheses
+											tr#metric-table-row
+												td.report-table-date(ng-repeat = "col in filterSelected(sortedCols)")
+													| {{ col | date : 'EEEE'}}
+											tr#metric-table-row
+												td.report-table-display-name(ng-repeat = "col in filterSelected(sortedCols)")
+													| {{eventData.colDisplayNames[col]}}
+											tbody(ng-repeat="gridData in customizedData.gridData")
+												tr
+													td.report-table-display-name-b(colspan="6" ng-if='gridData.checked')
+														| {{gridData.gridName}}
+												tr(ng-repeat="dailyData in gridData.dailyData" ng-if='gridData.checked')
+													td.report-table-data1(width="260")
+														| {{dailyData.label}}
+													td.report-table-data2(ng-repeat="col in filterSelected(sortedCols)")
+														| {{dailyData[col]}} 
+														br
+														| {{percentChanged(dailyData,col)}}
+									//.grid(id="{{'grid_'+$index}}", ui-grid="{data: previewedGrid, columnDefs : previewColumns, showFooter: false, enableVerticalScrollbar:0,enableHorizontalScrollbar: 2, enableHeaderOptions: false, enableCellSelection: false, enableRowSelection: false, enableCellEditOnFocus: true,}", ng-style="getPreviewTableHeight(grid,'grid_'+$index)",ui-grid-auto-resize, style="background-color:#fff;") 
+							div.pagebreak(ng-if='section.sectionType == "Charts"')
+								//div.well.no-print(ng-repeat='chartConfig in previewChartConfigs' ng-if='chartConfig.checked')
+									highchart(id="{{'chartHCp_'+$index}}" config='chartConfig')
+								div(ng-repeat='chartImgUrl in chartImgUrls' style="text-align:center")
+									//canvas(id="{{'canvas_'+$index}}")
+									a.preview-resize-img
+										img.img-responsive.well.print-preview-resize(src='{{chartImgUrl}}', alt='chart image' )
+							div.pagebreak(ng-if='section.sectionType == "Images"')
+								.row
+									.col-lg-12
+										div(ng-repeat='image in section.sectionData.doc')
+											a.preview-resize-img
+												img.img-responsive.well.print-preview-resize(data-ng-src='data:image/png;base64,{{image.base64}}' ng-if='image.checked')
+							br
+							div.notes(ng-if='!section.sectionData.notes == ""') Notes: *{{section.sectionData.notes}}
+								br
+								br
+								br
+							

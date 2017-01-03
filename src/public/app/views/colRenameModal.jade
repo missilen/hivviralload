@@ -1,0 +1,9 @@
+.modal-header
+      h3.modal-title Column Rename
+    .modal-body
+      | Old Name: {{oldColName}}
+      input(type='text', ng-model='newColName', placeholder='enter new column name')
+    .modal-footer
+      button.btn.btn-primary(ng-click='accept(newColName)') Accept
+      button.btn.btn-warning(ng-click='cancel()') Cancel
+

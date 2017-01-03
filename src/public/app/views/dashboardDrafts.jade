@@ -1,0 +1,81 @@
+#page-wrapper
+    .container-fluid
+        // Page Heading
+        .row
+            .header.col-lg-12
+                h2.page-header
+                    | Draft Events
+        // Page Content
+        .row
+            .col-lg-12
+                .table-responsive
+                    table.table.table-hover
+                        thead
+                            tr
+                                th
+                                    a(href="" ng-click="sortType = 'eventName'; sortReverse = !sortReverse; sortInstances('eventName')")
+                                        | Event
+                                        span(ng-show="sortType == 'eventName' && !sortReverse" class="fa fa-caret-down")
+                                        span(ng-show="sortType == 'eventName' &&  sortReverse" class="fa fa-caret-up") 
+                                th
+                                    a(href="" ng-click="sortType = 'eventType'; sortReverse = !sortReverse; sortInstances('eventType')")
+                                        | Type 
+                                        span(ng-show="sortType == 'eventType' && !sortReverse" class="fa fa-caret-down")
+                                        span(ng-show="sortType == 'eventType' &&  sortReverse" class="fa fa-caret-up") 
+                                th
+                                    a(href="" ng-click="sortType = 'coordinatorAssign'; sortReverse = !sortReverse; sortInstances('coordinatorAssign')")
+                                        | Coordinator 
+                                        span(ng-show="sortType == 'coordinatorAssign' && !sortReverse" class="fa fa-caret-down")
+                                        span(ng-show="sortType == 'coordinatorAssign' &&  sortReverse" class="fa fa-caret-up") 
+                                th
+                                    a(href="" ng-click="sortType = 'dateCreated'; sortReverse = !sortReverse; sortInstances('dateCreated')")
+                                        | Date 
+                                        span(ng-show="sortType == 'dateCreated' && !sortReverse" class="fa fa-caret-down")
+                                        span(ng-show="sortType == 'dateCreated' &&  sortReverse" class="fa fa-caret-up") 
+                                th
+                                    //a(href="" ng-click="sortType = 'dateCreated'; sortReverse = !sortReverse; sortInstances('eventName')")
+                                    | Edit Controls
+                        tbody
+                            tr(ng-repeat="instance in filinstances =(instances | searchAll : $parent.searchText) | limitTo: itemsPerPage : beginItem " ng-mouseenter="hover = true" ng-mouseleave="hover = false")
+                                td(ng-class-odd="'tableStripe'")
+                                    | {{instance.eventName}}
+                                td(ng-class-odd="'tableStripe'")
+                                    | {{instance.eventType}}
+                                td(ng-class-odd="'tableStripe'")
+                                    | {{instance.userCreated.displayName}}
+                                td(ng-class-odd="'tableStripe'")
+                                    | {{instance.dateCreated | date:'medium' }}
+                                td(ng-class-odd="'tableStripe'")
+                                    a.del-edit-btn.btn.btn-default.btn-xs(href='', data-nodrag='', ng-click="editDraft('lg',instance,true,true)")
+                                        .glyphicon.glyphicon-pencil
+                                    &nbsp;
+                                    a.del-edit-btn.btn.btn-default.btn-xs( href='', data-nodrag='', ng-click="deleteDraft(instance)")
+                                        .glyphicon.glyphicon-trash
+        .row(ng-show="filinstances.length > itemsPerPage")
+            .col-lg-12
+                .text-center
+                    pagination.pagination-sm(total-items="filinstances.length", items-per-page='itemsPerPage', ng-model='currentPage', boundary-links='true' ng-change="pageChanged()"  previous-text='‹' next-text='›' first-text='«' last-text='»')
+                                
+        // end pagination                     
+        //- .row
+        //-     .col-lg-12
+        //-         .pagination-container
+        //-             nav
+        //-                 ul.pagination
+        //-                     li
+        //-                         a(href='#', aria-label='Previous')
+        //-                             span(aria-hidden='true') «
+        //-                     li
+        //-                         a(href='#') 1
+        //-                     li
+        //-                         a(href='#') 2
+        //-                     li
+        //-                         a(href='#') 3
+        //-                     li
+        //-                         a(href='#', aria-label='Next')
+        //-                             span(aria-hidden='true') »
+        // end pagination
+    // /.container-fluid
+// /#page-wrapper
+// /#wrapper
+

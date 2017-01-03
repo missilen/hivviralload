@@ -1,0 +1,155 @@
+div(ng-controller='customizeReportCtrl' style='background-color:#f2f2f2;')
+	.modal-content
+		.modal-header.header_dark
+			.row(style='background-color:#ffffff;')
+				.col-lg-12
+					.create-new-event-cont
+						h2.h2-create-new(id='myModalLabel') 
+							div Customize Report: {{eventdoc.eventName}}
+						br
+						div(style="color:#acacac; font-style:italic; width:570px;") Please select the checkbox to add an item to your report. You also can drag and move items in any desired order. If you still have edits to make in the data table or bullets, please close this window and make your changes on the Events page.
+						br
+						br
+					.save-draft-cont(style='position:absolute; float:left; margin-left:-30px;')
+						button.btn.btn-default.btn-circle.glyphicon.glyphicon-remove(type='button' ng-click='cancel();saveCustomizedReport();hideGridCheckbox')
+					.create-btn-cont
+						button.btn.btn-success(type="button" ng-click="preview('sm',customizedDoc)")
+							| Preview Report
+		.modal-body
+			.row
+				.col-lg-6.col-md-6.col-sm-6
+					div
+						label Report Title
+						input.form-control(placeholder='Enter report title' ng-model='customizedDoc.reportMeta.title')
+						label Report Type
+						input.form-control(placeholder='Enter report type' ng-model='customizedDoc.reportMeta.type')
+			br
+			br
+			.row
+				.col-lg-12
+					//ol(ui-tree-nodes='' ng-model='customizedDoc.docData' data-type='section')
+					div(ng-repeat='section in customizedDoc.docData' )
+						.topic-title(ng-show='!section.editing' ng-mouseenter="hoverSection = true" ng-mouseleave="hoverSection = false")
+							a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show='hoverSection' href='' data-nodrag='' ng-click='editSection(section)')
+								i.glyphicon.glyphicon-pencil
+							div  {{section.sectionName}}
+						.topic-title(data-nodrag='', ng-show='section.editing')
+							label.sr-only(for='SectionName') Section Name
+							input.form-control(type='text', placeholder='Section name', ng-model='section.sectionName' ng-keyup='$event.keyCode==13 ? saveSection(section,$event) : null' ng-blur='saveSection(section,$event)')
+						.report-wrapper
+							div(ng-if='section.sectionType == "Metrics"')
+								.row
+									.col-lg-12(style="overflow:scroll;")
+										table(style="margin-bottom:20px;", border="1")
+											tr(style="background-color:#c6d8ae")
+												td(rowspan="4")
+													| &nbsp;
+												td(style="font-size:20px; font-weight: bold; text-align:center; padding:5px;", colspan="{{numberOfColumns}}")
+													| Daily Metrics
+											tr(style="background-color:#c6d8ae")
+												td(style="font-style:italic; text-align:center; padding:5px;", colspan="{{numberOfColumns}}")
+													| Percent change from previous day is given in parentheses
+											tr(style="background-color:#c6d8ae")
+												td(style="text-align:center; padding:3px;", ng-repeat = "col in sortedCols")
+													| {{ col | date : 'EEEE'}} 
+											tr(style="background-color:#c6d8ae")
+												td(style="text-align:center; padding:0px 0px 0px 0px; min-width:135px;", ng-repeat = "col in sortedCols")
+													//.checkbox
+													input(type='checkbox' ng-change='checkChanged(customizedDoc.checkedColumns[col])' ng-disabled = 'haveChecked==checkedLimit && !customizedDoc.checkedColumns[col].checked' ng-model='customizedDoc.checkedColumns[col].checked')
+													| &nbsp;&nbsp;{{eventData.colDisplayNames[col]}}
+											tbody(ng-repeat="gridData in eventData.gridData")
+												tr
+													td(colspan="{{numberOfColumns}}" style="background-color:#c6d8ae; font-weight:bold; padding:0px 0 0px 25px;")
+														.checkbox
+															input(type='checkbox' ng-model='gridData.checked')
+															| {{gridData.gridName}}
+												tr(ng-repeat="dailyData in gridData.dailyData")
+													td(style="padding:2px 3px 2px 5px; min-width:250px; !important")
+														| {{dailyData.label}}
+													td(style="padding:2px 0px 2px 0px;text-align:center; line-height:16px;", ng-repeat="col in sortedCols")
+														| {{dailyData[col]}} 
+														br
+														| {{percentChanged(dailyData,col)}}
+							div(ng-if='section.sectionType == "Charts"')
+								.row
+									.col-lg-12
+										//ol(ui-tree-nodes='', ng-model='customizedDoc.chartConfigs' data-nodrop-enabled="true")
+										div(ng-repeat='chartConfig in customizedDoc.chartConfigs', style="margin-bottom:30px;")
+											h4.checkbox
+												input(type='checkbox' ng-model='chartConfig.checked')
+												| {{chartConfig.title.text}}
+											div.well
+												//- label
+												//- 	|Chart Title 
+												//- 	input.form-control(type='textarea' ng-model='chartConfig.title.text')
+												//- &nbsp;&nbsp;
+												//- label
+												//- 	|Y-axis Title 
+												//- 	input.form-control(type='textarea' ng-model='chartConfig.yAxis[0].title.text')
+												//- &nbsp;&nbsp;
+												//- label
+												//- 	|X-axis Title 
+												//- 	input.form-control(type='textarea' ng-model='chartConfig.xAxis.title.text')
+												highchart(id="{{'chartHC_'+$index}}" config='chartConfig')
+							div(ng-if='section.sectionType == "Images"')
+								.row
+									.col-lg-12
+										div(ng-repeat='image in section.sectionData.doc')
+											h4.checkbox
+												input(type='checkbox' ng-model = 'image.checked')
+											img.img-responsive.well(data-ng-src='data:image/png;base64,{{image.base64}}')
+							div.report-section(ng-repeat="category in section.sectionData.doc.categories" ng-if='section.sectionType =="Document"') 
+								h4.report-category
+									.checkbox
+										input(type='checkbox' ng-model='category.checked' ng-click='selectAll(category)')
+										| {{category.name}}
+								div(ng-repeat="topic in category.topics") 
+									h4.report-topic
+										.checkbox
+											//input(type='checkbox' ng-model='topic.checked' ng-checked='topic.checked')
+											input(id='category:{{$parent.$index}}_topics:{{$index}}' type='checkbox' ng-model='topic.checked' ng-click='childChecked(topic,category,$event)')
+											| {{topic.name}}
+									ul
+										li(ng-repeat="topicBullets in topic.bullets") 
+											.checkbox
+												//input(type='checkbox' ng-model='topicBullets.checked' ng-checked='topicBullets.checked')
+												input(id='category:{{$parent.$parent.$index}}_topics:{{$parent.$index}}_bullets:{{$index}}' type='checkbox' ng-model='topicBullets.checked' ng-click='childChecked(topicBullets,category,$event)')
+												| {{topicBullets.name}}
+											ul
+												li(ng-repeat="topicSubBullets in topicBullets.subBullets") 
+													.checkbox
+														//input(type='checkbox' ng-model='topicSubBullets.checked' ng-checked='topicSubBullets.checked')
+														input(id='category:{{$parent.$parent.$parent.$index}}_topics:{{$parent.$parent.$index}}_bullets:{{$parent.$index}}_subBullets:{{$index}}' type='checkbox' ng-model='topicSubBullets.checked' ng-click='childChecked(topicSubBullets,category,$event)')
+														| {{topicSubBullets.name}}
+									div(ng-repeat="subtopic in topic.subTopics")
+										h4.report-sub-topic
+											.checkbox
+												input(id='category:{{$parent.$parent.$index}}_topics:{{$parent.$index}}_subTopics:{{$index}}	' type='checkbox' ng-model='subtopic.checked' 	 ng-click='childChecked(subtopic,category,$event)')
+												| {{subtopic.name}}
+										ul
+											li(ng-repeat="bullet in subtopic.bullets") 
+												.checkbox
+													input(id='category:{{$parent.$parent.$parent.$index}}_topics:{{$parent.$parent.$index}}_subTopics:{{$parent.$index}}_bullets:{{$index}}' type='checkbox' ng-model = 'bullet.checked'  ng-click = 'childChecked(bullet,category,$event)')
+													| {{bullet.name}}	
+												ul
+													li(ng-repeat="subBullet in bullet.subBullets") 
+														.checkbox
+															input(id='category:{{$parent.$parent.$parent.$parent.$index}}_topics:{{$parent.$parent.$parent.$index}}_subTopics:{{$parent.$parent.$index}}_bullets:{{$parent.$index}}_subBullets:{{$index}}' type='checkbox' ng-model='subBullet.checked'  ng-click = 'childChecked(subBullet,category,$event)')
+															| {{subBullet.name}}
+							div(style="margin-top:20px;")
+								label Additional Notes
+								textarea.form-control.notesPlaceholder(placeholder='Enter text here' type='text', ng-model='section.sectionData.notes')
+							div(ng-repeat='chartConfig in hiddenChartConfigs' style="display:none")
+								highchart(id="{{'chartHCh_'+$index}}" config='chartConfig')
+							canvas(id="canvas" style="display:none;")
+							
+			//.row
+				.col-lg-6
+					h3 Data binding
+					.info
+						| {{  }}
+					pre.code.
+						{{ customizedDoc | json }}
+			
+
+

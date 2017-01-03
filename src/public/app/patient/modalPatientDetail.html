@@ -1,0 +1,68 @@
+<div>
+   <div class="modal-header">
+   </div>
+   <div class="modal-body" style="height:105vh;">
+           <div style="background-color:#ffffff;  margin:0px;" class="row">
+               <div class="col-lg-12">
+                    <h4 class="page-header">Patient Detail</h4>
+               </div>
+               <div style="position:absolute; float:left; margin-left:-30px;">
+                   <button type="button" ng-click="cancel()" class="btn btn-default btn-circle glyphicon glyphicon-remove"></button>
+               </div>
+               <div><h3>{{myPatient.display}}</h3></div>
+          </div>
+          <div style="margin:0px;" class="row">
+               <div class="col-lg-12 col-md-12 col-sm-12">
+                   <div class="tab-container">
+                       <uib-tabset>
+                           <uib-tab>
+                               <uib-tab-heading>
+                                   <span style="font-size:14pt; font-weight: bold">Patient Summary</span>
+                               </uib-tab-heading>
+                               <div class="row">
+                                   <div style="padding-left:35px; padding-right:35px; padding-bottom:15px;"  class="col-lg-12 col-md-12 col-sm-12"><br/>
+                                       <div class="row">
+                                           <div class="col-lg-9 col-md-9 col-sm-9">
+
+                                           </div>
+                                       </div><br/>
+                                       <hr/><br/>
+                                   </div>
+                               </div>
+                           </uib-tab>
+                           <uib-tab>
+                               <uib-tab-heading>
+                                   <span style="font-size:14pt; font-weight: bold">Profile Demographic</span>
+                               </uib-tab-heading>
+                               <div class="row">
+                                   <div style="padding-left:35px; padding-right:35px; padding-bottom:15px;" class="col-lg-12 col-md-12 col-sm-12"><br/>
+                                       <div class="row">
+                                           <div class="col-lg-9 col-md-9 col-sm-9">
+                                           </div>
+                                       </div><br/>
+                                       <hr/><br/>
+                                   </div>
+                               </div>
+                           </uib-tab>
+                           <uib-tab>
+                               <uib-tab-heading>
+                                   <span style="font-size:14pt; font-weight: bold">Clinical Lab Data</span>
+                               </uib-tab-heading>
+                               <div class="row">
+                                   <div style="padding-left:35px; padding-right:35px; padding-bottom:15px;" class="col-lg-12 col-md-12 col-sm-12"><br/>
+                                       <div class="row">
+                                           <div class="col-lg-9 col-md-9 col-sm-9">
+                                               <button class="btn btn-primary" ng-click="createLabOrder(myPatient.uuid,'test')">New Lab Order</button>
+                                           </div>
+                                       </div><br/>
+                                       <hr/><br/>
+                                   </div>
+                               </div>
+                           </uib-tab>
+                       </uib-tabset>
+                   </div>
+               </div>
+           </div>
+           <div class="clear-divs"></div>
+    </div>
+ </div>

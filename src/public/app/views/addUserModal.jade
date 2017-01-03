@@ -1,0 +1,36 @@
+div(ng-controller='addUserCtrl')
+	.modal-header
+	.modal-body(style='height:104vh;')
+		.row(style='background-color:#ffffff; margin:0px;')
+			.col-lg-12
+				.save-draft-cont(style='position:absolute; float:let; margin-left:-45px;')
+					button.btn.btn-default.btn-circle.glyphicon.glyphicon-remove(type='button' ng-click='cancel()')
+				br
+		.row
+			br
+			.col-lg-12.col-md-12
+				form.form-horizontal(name='addUserForm')
+					fieldset
+						legend Add New User
+						.form-group
+							label.col-md-2.control-label(for='firstName') First Name
+							.col-md-10
+								input.form-control(name='firstName', type='firstName', placeholder='First Name', ng-model='firstName',required)
+						.form-group
+							label.col-md-2.control-label(for='lastName') Last Name 
+							.col-md-10
+								input.form-control(name='lastName', type='lastName', placeholder='Last Name', ng-model='lastName', required)
+						.form-group
+							label.col-md-2.control-label(for='email') Email
+							.col-md-10
+								input.form-control(name='email', type='email', placeholder='Email', ng-model='email',required)
+						.form-group
+							label.col-md-2.control-label(for='password') Password
+							.col-md-10
+								input.form-control(name='password', type='password', placeholder='Password', ng-model='password',required)
+						.form-group
+							.col-md-10.col-md-offset-2
+								button.btn.btn-primary.pull-right(ng-click='addUser()', ng-disabled='addUserForm.$invalid') Submit	
+										
+
+			

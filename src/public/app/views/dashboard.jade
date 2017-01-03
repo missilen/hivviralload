@@ -1,0 +1,75 @@
+#page-wrapper
+    .container-fluid
+        // Page Heading
+        .row
+            .header.col-lg-12
+                h2.page-header
+                    | Active Events
+        // Page Content
+        .row
+            .col-lg-12
+                .table-responsive
+                    table.table.table-hover.tableCustom
+                        thead
+                            tr
+                                th
+                                    a(href="" ng-click="sortType = 'eventName'; sortReverse = !sortReverse; sortInstances('eventName')")
+                                        | Event
+                                        span(ng-show="sortType == 'eventName' && !sortReverse" class="fa fa-caret-down")
+                                        span(ng-show="sortType == 'eventName' &&  sortReverse" class="fa fa-caret-up")
+                                th
+                                    a(href="" ng-click="sortType = 'eventDueDate'; sortReverse = !sortReverse; sortInstances('eventDueDate')")
+                                        | Due Date
+                                        span(ng-show="sortType == 'eventDueDate' && !sortReverse" class="fa fa-caret-down")
+                                        span(ng-show="sortType == 'eventDueDate' &&  sortReverse" class="fa fa-caret-up")
+                                th
+                                    a(href="" ng-click="sortType = 'eventInstanceId'; sortReverse = !sortReverse; sortInstances('eventInstanceId')")
+                                        | ID
+                                        span(ng-show="sortType == 'eventInstanceId' && !sortReverse" class="fa fa-caret-down")
+                                        span(ng-show="sortType == 'eventInstanceId' &&  sortReverse" class="fa fa-caret-up")  
+                                th
+                                    a(href="" ng-click="sortType = 'eventType'; sortReverse = !sortReverse; sortInstances('eventType')")
+                                        | Type 
+                                        span(ng-show="sortType == 'eventType' && !sortReverse" class="fa fa-caret-down")
+                                        span(ng-show="sortType == 'eventType' &&  sortReverse" class="fa fa-caret-up") 
+                                th
+                                    a(href="" ng-click="sortType = 'coordinatorAssign'; sortReverse = !sortReverse; sortInstances('coordinatorAssign')")
+                                        | Coordinator 
+                                        span(ng-show="sortType == 'coordinatorAssign' && !sortReverse" class="fa fa-caret-down")
+                                        span(ng-show="sortType == 'coordinatorAssign' &&  sortReverse" class="fa fa-caret-up") 
+
+                                th(ng-show="identity.isAuthorized('levelTwo')")
+                                    a(href="" ng-click="sortType = 'eventInstanceStatus'; sortReverse = !sortReverse; sortInstances('randomNumber')")
+                                        | Data Received
+                                        span(ng-show="sortType == 'eventInstanceStatus' && !sortReverse" class="fa fa-caret-down")
+                                        span(ng-show="sortType == 'eventInstanceStatus' &&  sortReverse" class="fa fa-caret-up")  
+                        tbody
+                             tr(ng-repeat="instance in filinstances =(instances | searchAll : $parent.searchText) | limitTo: itemsPerPage : beginItem "  )
+                                td(ng-class-odd="'tableStripe'")
+                                    a(href="#/dashboard/event/{{instance._id}}" ){{instance.eventName}}
+                                td(ng-class-odd="'tableStripe'")
+                                    | {{instance.eventDueDate | date:'MM/dd/yyyy' }}
+                                td(ng-class-odd="'tableStripe'")
+                                    | {{instance.eventInstanceId}}
+                                td(ng-class-odd="'tableStripe'")
+                                    | {{instance.eventType}}
+                                td(ng-class-odd="'tableStripe'")
+                                    | {{instance.userCreated.displayName}}
+
+                                td(ng-show="identity.isAuthorized('levelTwo')" ng-class-odd="'tableStripe'")
+                                    progressbar(animate='false', value='instance.eventInstanceStatus' type ="success" ng-if="instance.eventInstanceStatus==100")
+                                        span(ng-class="{progressbartextblack: instance.eventInstanceStatus == 0}")
+                                            | {{instance.eventInstanceStatus}}%
+                                    progressbar(animate='false', value='instance.eventInstanceStatus' ng-if="instance.eventInstanceStatus<100")
+                                        span(ng-class="{progressbartextblack: instance.eventInstanceStatus == 0}")
+                                            | {{instance.eventInstanceStatus}}%
+                                td(ng-if="identity.isAuthorized('levelTwo')" ng-class="'infoButtonSm'")
+                                    a.btn.btn-default.btn-xs( href='', ng-click="showInfo(instance)")
+                                         .glyphicon.glyphicon-info-sign
+                                td(ng-if="identity.isAuthorized('levelTwo')")
+                                    a.del-edit-btn.btn.btn-default.btn-xs( href='', ng-click="deleteActive(instance)")
+                                        .glyphicon.glyphicon-trash
+        .row(ng-show='filinstances.length > itemsPerPage')
+            .col-lg-12
+                .text-center
+                    pagination.pagination-sm(total-items="filinstances.length", items-per-page='itemsPerPage', ng-model='currentPage', max-size='maxsize', boundary-links='true' ng-change="pageChanged()"  previous-text='‹' next-text='›' first-text='«' last-text='»')

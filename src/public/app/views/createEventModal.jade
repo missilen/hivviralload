@@ -1,0 +1,198 @@
+div(ng-controller="createEventCtrl" style="background-color:#f2f2f2;")
+	.modal-content
+		.modal-header.header_dark
+			.row(style='background-color:#ffffff;')
+				.col-lg-12
+					.create-new-event-cont
+						h2.h2-create-new(id='myModalLabel') Create Event
+						br
+						p.p-create-new {{date | date:'medium'}}
+					.create-btn-cont
+						button.btn.btn-success(type="button" ng-click="createEvent()")
+							| Create
+					.save-draft-cont
+						button.btn.btn-success(type="button" ng-click="saveDraftEvent('clicked')")
+							| Save Draft
+					
+					.save-draft-cont(style='position:absolute; float:left; margin-left:-30px;')
+						button.btn.btn-default.btn-circle.glyphicon.glyphicon-remove(type="button" ng-click="cancel()")
+		.modal-body(style='background-color:#f2f2f2;')
+			.row.row-margin-top
+				.col-lg-3.col-md-4.col-sm-6
+					.form-comp-cont-toprow
+						label Event Name
+						input#exampleInputName2.form-control(placeholder="Enter event name" ng-model="eventdoc.eventName" ng-disabled="eventNameReadonly")
+						br
+						input(type='checkbox', ng-model='eventNameOverride' ng-change="setOverrideFlags()" ng-show="showOverrideCheckbox" ng-disabled="eventNameOverrideDisable")
+						label.small(ng-show="showOverrideCheckbox")
+							| &nbsp;Edit Event Name
+				.col-lg-3.col-md-4.col-sm-6
+					.form-comp-cont-toprow2
+						label Type
+						select.form-control(placeholder="Select event type" ng-model="eventdoc.eventType" ng-options="event as event for event in eventTypes | orderBy: event")
+							option(value="") - Select event type -
+				.col-lg-6.col-md-4.col-sm-0
+			.row.row-margin
+				.col-lg-3.col-md-4.col-sm-6
+					.form-comp-cont-bottomrow
+						label Due Date
+						//input.form-control(id="dueDate" placeholder="Enter due date" ng-model="eventdoc.eventDueDate")
+						.dropdown
+							a#dropdown1.dropdown-toggle(role='button', data-toggle='dropdown', data-target='#', href='')
+								.input-group
+									div.form-control(type='text' placeholder='Please select due date')
+										| {{eventdoc.eventDueDate | date:'MMM d, yyyy h:mm a'}}
+									span.input-group-addon
+										i.glyphicon.glyphicon-calendar
+							ul.dropdown-menu(role='menu', aria-labelledby='dLabel')
+								datetimepicker(data-on-set-time="onTimeSet(newDate, oldDate)" data-ng-model='eventdoc.eventDueDate', data-datetimepicker-config="{ dropdownSelector: '#dropdown1', minView:'hour'}")
+				.col-lg-3.col-md-4.col-sm-6
+					.form-comp-cont-bottomrow2
+						label Publish Date
+						//input.form-control(id="publishDate" placeholder="Enter publish date" ng-model="eventdoc.eventPublishDate")
+						.dropdown
+							a#dropdown2.dropdown-toggle(role='button', data-toggle='dropdown', data-target='#', href='')
+								.input-group
+									div.form-control(type='text')
+										| {{eventdoc.eventPublishDate | date:'MMM d, yyyy h:mm a'}}
+									span.input-group-addon
+										i.glyphicon.glyphicon-calendar
+							ul.dropdown-menu(role='menu', aria-labelledby='dLabel')
+								datetimepicker(data-ng-model='eventdoc.eventPublishDate', data-datetimepicker-config="{ dropdownSelector: '#dropdown2', minView: 'hour' }")
+				.col-lg-6.col-md-4.col-sm-0
+			.row(style='background-color:#f2f2f2; height:100vh;')
+				.col-lg-12.col-md-12.col-sm-12
+					.tab-container
+						tabset
+							tab(ng-repeat="category in eventdoc.categories" heading="{{category.name}}" active="tabCategory[$index].active")
+								.row
+									.col-lg-12(ui-tree='options')
+										.tab-content(style='background-color:#ffffff;')
+											.tab-title-heading
+												img(ng-if='category.name=="Social Media"' src='img/web-icon.png', width='37', height='32')
+												img(ng-if='category.name=="Traditional News Media"' src='img/news-icon.png', width='37', height='32')
+												|   {{category.name}}
+											.assign-to-cont
+												label Assign To
+												select.form-control(placeholder='Select Analyst' ng-model='category.userAssigned' ng-options='user as user.displayName for user in users track by user.id' )
+													option(value="") - Select an analyst -
+											br
+											br
+											br
+											hr
+											br
+											ol(ui-tree-nodes='', ng-model='category.topics', data-type='topic')
+												li(ng-repeat='topic in category.topics', ui-tree-node='')
+													.topic-title.angular-ui-tree-handle(ng-show='!topic.editing' ng-mouseenter="hoverTopic = true" ng-mouseleave="hoverTopic = false")
+														a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverTopic" href='', data-nodrag='', ng-click='removeTopic(category,topic)')
+															i.glyphicon.glyphicon-trash
+														a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverTopic" href='', data-nodrag='', ng-click='editTopic(topic)')
+															i.glyphicon.glyphicon-pencil
+														div  {{topic.name}}
+													.topic-title.angular-ui-tree-handle(data-nodrag='', ng-show='topic.editing')
+														label.sr-only(for='topicName') Topic name
+														input.form-control(type='text', placeholder='Topic name', ng-model='topic.name' ng-keyup='$event.keyCode==13 ? saveTopic(topic,$event) : null' ng-blur='saveTopic(topic,$event)')
+													ol(ui-tree-nodes='', ng-model='topic.subTopics', data-type='subTopic')
+														li(ng-repeat='subTopic in topic.subTopics', ui-tree-node='')
+															.subTopic-title.angular-ui-tree-handle(ng-show='!subTopic.editing' ng-mouseenter="hoverSubTopic = true" ng-mouseleave="hoverSubTopic = false")
+																a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverSubTopic" href='', data-nodrag='', ng-click='removeSubTopic(topic, subTopic)')
+																	i.glyphicon.glyphicon-trash
+																a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverSubTopic" href='', data-nodrag='', ng-click='editSubTopic(subTopic)')
+																	i.glyphicon.glyphicon-pencil
+																div
+																	| {{subTopic.name}}
+															.subTopic-title.angular-ui-tree-handle(data-nodrag='', ng-show='subTopic.editing')
+																label.sr-only(for='subTopicName') SubTopic name
+																input.form-control(type='text', ng-model='subTopic.name', placeholder='SubTopic name' ng-keyup='$event.keyCode==13 ? saveSubTopic(subTopic,$event) : null' ng-blur='saveSubTopic(subTopic,$event)')
+													ol.angular-ui-tree-nodes(data-nodrag='')
+														li.angular-ui-tree-node
+															.subTopic-title.angular-ui-tree-handle
+																form.form-inline(role='form')
+																	.form-topic
+																		label.sr-only(for='subTopicName') SubTopic name
+																		input.form-control(type='text', ng-model='topic.newSubTopicName', placeholder='SubTopic name' ng-keyup='$event.keyCode==13 ? addSubTopic(topic,$event) : null' ng-blur='addSubTopic(topic,$event)')
+																	//button.btn.btn-default(type='submit', ng-click='addSubTopic(topic)') Add SubTopic
+											ol.angular-ui-tree-nodes
+												li.angular-ui-tree-node
+													.topic-title.angular-ui-tree-handle
+														form.form-inline(role='form')
+															.form-topic
+																label.sr-only(for='topicName') Topic name
+																input#topicName.form-control(type='text', placeholder='Topic name' ng-model="category.newTopicName" ng-keyup='$event.keyCode==13 ? addTopic(category,$event) : null' ng-blur='addTopic(category,$event)')
+															//button.btn.btn-default(type='submit', ng-click='addTopic(category)') Add Topic
+							//DATA TAB
+							tab(heading="Daily Metrics" select="tabShown = !tabShown" deselect="tabShown = !tabShown")
+								.row
+									.col-lg-12.col-md-12.col-sm-12(style='padding-left:35px; padding-right:35px; padding-bottom:15px;' ui-tree='optionsGrid')
+										.row
+											.col-lg-9.col-md-9.col-sm-9
+												.tab-title-heading
+													img(src='img/web-icon.png', width='37', height='32')
+													| Daily Metrics
+										br
+										hr
+										br
+										p(ng-if = '!isNew') Note: Since this draft event is created from an existing event, the Daily Metrics layout can not be modified due to live data being entered
+										.row
+											.panel.panel-default
+												.panel-body
+													ol(ui-tree-nodes='', ng-model='eventdoc.gridData' ,data-type='grid')
+														li(ng-repeat='grid in eventdoc.gridData', ui-tree-node='' , on-finish-render="ngRepeatFinished")
+															.topic-title-tables.angular-ui-tree-handle(ng-show='!grid.editing' ng-mouseenter="hoverTopic = true" ng-mouseleave="hoverTopic = false")
+																a.del-edit-btn.btn.btn-default.btn-sm.pull-right(ng-show="identity.isAuthorized('levelTwo')" href='', data-nodrag='', ng-click='removeTable(grid.gridName)')
+																	i.glyphicon.glyphicon-trash
+																a.del-edit-btn.btn.btn-default.btn-sm.pull-right(ng-show="identity.isAuthorized('levelTwo')" href='', data-nodrag='', ng-click='editTableName(grid)')
+																	i.glyphicon.glyphicon-edit
+																div  {{grid.gridName}}
+															.topic-title-tables.angular-ui-tree-handle(data-nodrag='', ng-show='grid.editing')
+																label.sr-only(for='gridName') Table name
+																input.form-control(type='text', placeholder='new table item', ng-model='grid.gridName' ng-keyup='$event.keyCode==13 ? saveTableName(grid,$event) : null' ng-blur='saveTableName(grid,$event)')
+															ol(ui-tree-nodes='', ng-model='grid.dailyData' , data-type='label')
+																li(ng-repeat='subTopic in grid.dailyData', ui-tree-node='')
+																	.subTopic-title.angular-ui-tree-handle(ng-show='!subTopic.editing' ng-mouseenter="hoverSubTopic = true" ng-mouseleave="hoverSubTopic = false")
+																		a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverSubTopic" href='', data-nodrag='', ng-click='removeLabel(grid, subTopic)')
+																			i.glyphicon.glyphicon-trash
+																		a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverSubTopic" href='', data-nodrag='', ng-click='editLabel(subTopic)')
+																			i.glyphicon.glyphicon-pencil
+																		div
+																			| {{subTopic.label}}
+																	.subTopic-title.angular-ui-tree-handle(data-nodrag='', ng-show='subTopic.editing')
+																		label.sr-only(for='subTopicName') SubTopic name
+																		input.form-control(type='text', ng-model='subTopic.label', placeholder='new row item' ng-keyup='$event.keyCode==13 ? saveLabel(subTopic,$event) : null' ng-blur='saveLabel(subTopic,$event)')
+															ol.angular-ui-tree-nodes(data-nodrag='')
+																li.angular-ui-tree-node
+																	.subTopic-title.angular-ui-tree-handle
+																		form.form-inline(role='form')
+																			.form-topic
+																				label.sr-only(for='subTopicName') SubTopic name
+																				input.form-control(type='text', ng-model='grid.newSubTopicName', placeholder='new row item' ng-keyup='$event.keyCode==13 ? addLabel(grid,$event) : null' ng-blur='addLabel(grid,$event)')
+																	//.grid.padding-fix(id="{{'grid_'+$index}}", ui-grid="{rowHeight: 30,data: grid.dailyData, columnDefs : columns, showFooter: false, enableVerticalScrollbar:0,enableHorizontalScrollbar: 0, enableCellSelection: true, enableRowSelection: false, enableCellEditOnFocus: true}", ng-style="getTableHeight(grid,'grid_'+$index)",ui-grid-auto-resize,ui-grid-edit,ui-grid-cellNav,ui-grid-pinning) 
+																	//- br
+																	//- button#addData.btn.btn-default(type='button', ng-click='addRow(grid)', style='color:#337ab7;') Add New Row to {{grid.gridName}}
+																	//- br
+																	br
+															//i Edit Rows:
+															//a.del-edit-btn.btn.btn-default(style="color:#337ab7; margin-left:11px; padding-left:13px; padding-right:13px;", ng-show="identity.isAuthorized('levelTwo')" href='', data-nodrag='', ng-click="removeLastRow(grid,'grid_'+$index)")
+															//	| -
+															//a.del-edit-btn.btn.btn-default(style="color:#337ab7;", ng-show="identity.isAuthorized('levelTwo')" href='', data-nodrag='', ng-click="addRow(grid,'grid_'+$index)")
+															//	| +
+													ol.angular-ui-tree-nodes
+														li.angular-ui-tree-node
+															.topic-title-tables.angular-ui-tree-handle
+																form.form-inline(role='form')
+																	.form-topic
+																		label.sr-only(for='gridName') Table name
+																		input#gridName.form-control(type='text' placeholder='new table item' ng-model="grid.newGridName" ng-keyup='$event.keyCode==13 ? addTable(grid,$event) : null' ng-blur='addTable(grid,$event)')
+								//.row
+									.col-lg-6
+											h3 Data binding
+											.info
+												| {{  }}
+											pre.code.
+												{{ eventdoc | json }}	
+			.clear-divs
+
+
+			
+
+							

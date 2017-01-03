@@ -1,0 +1,76 @@
+div(ng-controller="importEventCtrl" style="background-color:#f2f2f2;")
+.modal-header
+  .modal-body(style='height:105vh;')
+    .row(style='background-color:#ffffff; margin:0px;')
+      .col-lg-12
+      .save-draft-cont(style='position:absolute; float:left; margin-left:-45px;')
+            button.btn.btn-default.btn-circle.glyphicon.glyphicon-remove(type="button" ng-click="cancel()")
+      .create-new-event-cont
+      .h2.h2-create-new|Create from Existing Event
+      br
+      .hor-line-br
+      br
+    .row
+        .col-md-4
+        
+            .right-inner-addon
+                i.fa.fa-fw.fa-search
+                input.form-control(ng-model="searchText" type='search', placeholder='Search Events', style='background-color:#ffffff; border: 1px thin; border-color:#c7c7c7; font-weight:normal;')
+        br
+        br
+    .row
+        .col-lg-12
+            .hor-line-br(style='margin-top:15px;')
+    .row
+        .col-lg-12
+                .table-responsive
+                    table.table.table-hover
+                        thead
+                            tr
+                                th
+                                    a(href="" ng-click="sortType = 'eventName'; sortReverse = !sortReverse; sortInstances('eventName')")
+                                        | Event
+                                        span(ng-show="sortType == 'eventName' && !sortReverse" class="fa fa-caret-down")
+                                        span(ng-show="sortType == 'eventName' &&  sortReverse" class="fa fa-caret-up") 
+                                th
+                                    a(href="" ng-click="sortType = 'eventInstanceId'; sortReverse = !sortReverse; sortInstances('eventInstanceId')")
+                                        | ID
+                                        span(ng-show="sortType == 'eventInstanceId' && !sortReverse" class="fa fa-caret-down")
+                                        span(ng-show="sortType == 'eventInstanceId' &&  sortReverse" class="fa fa-caret-up")  
+                                th
+                                    a(href="" ng-click="sortType = 'eventType'; sortReverse = !sortReverse; sortInstances('eventType')")
+                                        | Type 
+                                        span(ng-show="sortType == 'eventType' && !sortReverse" class="fa fa-caret-down")
+                                        span(ng-show="sortType == 'eventType' &&  sortReverse" class="fa fa-caret-up") 
+                                th
+                                    a(href="" ng-click="sortType = 'coordinatorAssign'; sortReverse = !sortReverse; sortInstances('coordinatorAssign')")
+                                        | Coordinator 
+                                        span(ng-show="sortType == 'coordinatorAssign' && !sortReverse" class="fa fa-caret-down")
+                                        span(ng-show="sortType == 'coordinatorAssign' &&  sortReverse" class="fa fa-caret-up") 
+                                th
+                                    a(href="" ng-click="sortType = 'dateCreated'; sortReverse = !sortReverse; sortInstances('dateCreated')")
+                                        | Date 
+                                        span(ng-show="sortType == 'dateCreated' && !sortReverse" class="fa fa-caret-down")
+                                        span(ng-show="sortType == 'dateCreated' &&  sortReverse" class="fa fa-caret-up") 
+                                th
+                                    | 
+                        tbody
+                             tr(ng-repeat="instance in filinstances =(instances | searchAll : searchText) | limitTo: itemsPerPage : beginItem " ng-mouseenter="hover = true" ng-mouseleave="hover = false")
+                                td(ng-class-odd="'tableStripe'")
+                                    | {{instance.eventName}} 
+                                td(ng-class-odd="'tableStripe'")
+                                    | {{instance.eventInstanceId}}
+                                td(ng-class-odd="'tableStripe'")
+                                    | {{instance.eventType}}
+                                td(ng-class-odd="'tableStripe'")
+                                    | {{instance.userCreated.displayName}}
+                                td(ng-class-odd="'tableStripe'")
+                                    | {{instance.dateCreated | date:'MM/dd/yyyy' }}
+                                td(ng-class-odd="'tableStripe'")
+                                    a(href='', data-nodrag='', ng-click="showCopyOption('md',instance)")
+                                        span.glyphicon.glyphicon-duplicate(style='font-size:1.4em;')
+    .row(ng-show='filinstances.length > itemsPerPage')
+        .col-lg-12(style="margin: 0 auto;")
+            .text-center
+                pagination.pagination-sm(total-items="filinstances.length", items-per-page='itemsPerPage', ng-model='currentPage', boundary-links='true' ng-change="pageChanged()"  previous-text='‹' next-text='›' first-text='«' last-text='»')
+                                              

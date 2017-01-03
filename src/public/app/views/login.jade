@@ -1,0 +1,45 @@
+div(style="background-color:#2a2d33;margin-left:-234px" ng-if="!identity.isAuthenticated()")
+    .login-cont
+        br
+        br
+        br
+        br
+        |             
+        .login-header(align='center')
+          img(src='img/comm-serve-logo-login.png', width='300', height='45')
+        .login-content-cont
+          .login-content(align='center')
+            h4 Sign in to your account
+            br
+            | &#x9;&#x9;&#x9;
+            form
+              .form-group
+                input#exampleInputEmail1.form-control.input-lg(type='text' placeholder='Email' ng-model='email')
+              |   &#x9;&#x9;&#x9;
+              .form-group
+                input#exampleInputPassword1.form-control.input-lg(type='password' placeholder='Password' ng-model='password')
+              |   
+              |   &#x9;&#x9;&#x9;
+              button.btn.btn-success.btn-lg(type='submit', style='width:100%; background-color:#9ccd25; border:1px solid #8cb823; text-shadow: -1px 1px 0px rgba(122, 163, 22, 1);' ng-click="login(email, password)") Login
+        .login-footer(align='center')
+          img(src='img/cdc-logo.png')
+          br
+          br
+          |    &#x9;
+          img(src='img/iiu-logo.png')
+
+//- .container-fluid
+//-     // Page Heading
+//-     .row
+//-         .header.col-md-10
+//-             h2.page-header
+//-                 | Login  
+//-             .div
+//-                 .well.col-md-10
+//-                     form
+//-                         .form-group
+//-                             input.form-control(placeholder='Email' ng-model='email')
+//-                         .form-group
+//-                             input.form-control(type='password' placeholder='Password' ng-model='password')
+//-                         button.btn.btn-primary(ng-click="login(email, password)") Login
+

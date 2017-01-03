@@ -1,0 +1,75 @@
+doctype
+html(lang="en" ng-app="app")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title HivViral
+    link(rel="stylesheet" href="/css/bootstrap.min.css")
+    link(rel="stylesheet" href="/css/angular-ui-tree.min.css")
+    link(rel="stylesheet" href="/vendor/angular-ui-grid/nggrid 3rc21/css/ui-grid.min.css")
+    link(rel="stylesheet" href="/vendor/chartjs/css/angular-chart.css")
+    link(rel="stylesheet" href="/css/font-awesome.min.css")
+    link(rel="stylesheet" href="/css/custom.css")
+    link(rel="stylesheet" href="/vendor/toastr/toastr.css")
+    link(rel="stylesheet" href="/css/animation.css")
+    link(rel="stylesheet" href="/css/sb-admin.css")
+    link(rel="stylesheet" href="/css/create-new-event.css")
+    link(rel="stylesheet" href="/css/login.css")
+    link(rel="stylesheet" href="/css/datetimepicker.css")
+    link(rel="stylesheet" href="/vendor/bootstrap-sweetalert/lib/sweet-alert.css")
+    link(rel="stylesheet" href="/vendor/angular-multi-select/isteven-multi-select.css")
+    link(rel="P3Pv1" href="http://www.cdc.gov/w3c/p3p.xml")
+  
+    body(ng-controller='rootCtrl')
+        #wrapper(style="display:none")
+            // Navigation
+            nav.navbar.navbar-inverse.navbar-fixed-top.ng-cloak(role='navigation' ng-show="identity.isAuthenticated()") 
+                // Brand and toggle get grouped for better mobile display
+                .navbar-header.ng-cloak
+                    img(src='img/comm-serve-logo.png', height='71', width='234')
+                // Top Menu Items
+                .create-event-button
+                    button.btn.btn-primary.ng-cloak(type='button' ng-click="createEvent('lg',null,true)" ng-show="identity.isAuthorized('levelTwo')") Create New Event
+                .create-event-button
+                    button.btn.btn-primary.ng-cloak(type='button' ng-click="showAvailEvents('lg')" ng-show="identity.isAuthorized('levelTwo')") Create from Existing Event
+                // Sidebar Menu Items - These collapse to the responsive navigation menu on small screens
+                .collapse.navbar-collapse.navbar-ex1-collapse.ng-cloak
+                    ul.nav.navbar-nav.side-nav.ng-cloak
+                        li.side-nav-welcome( ng-show="identity.isAuthenticated()")
+                            i.fa.fa-fw.fa-user.ng-cloak
+                            |  Hello, {{identity.currentUser.displayName}}
+                            br
+                            .role-style 
+                                | ({{identity.isAuthenticated() ? identity.getRoleName(): null}})
+                        li.side-nav-search
+                            .col-md-12
+                                .right-inner-addon
+                                    i.fa.fa-fw.fa-search
+                                    input.form-control(ng-model="searchText" type='search', placeholder='Search Events', style='background-color:#44474c; border: 1px thin; border-color:#212328; color:#aeaeae; font-weight:normal;')
+                        li.side-nav-main-tab
+                            //i.fa.fa-fw.fa-home
+                            |   EVENTS
+                        li
+                            a(href='/#/') Active
+                        li(ng-show="identity.isAuthorized('levelTwo')")
+                            a(href='/#/dashboard/drafts') Drafts
+                        li(ng-show="identity.isAuthorized('levelTwo')")
+                            a(href='/#/dashboard/archives') Archived
+                            br
+                        li.side-nav-settings
+                            //i.fa.fa-fw.fa-cog
+                            |   SETTINGS
+                        li
+                            a(href='/#/admin' ng-show="identity.isAuthorized('levelTwo')") Admin
+                        li
+                            a(href='' ng-click='logout()')
+                                | Logout
+                                i.fa.fa-fw.fa-power-off
+                        li.side-nav-cdc-logo
+                            img(src='img/cdc-logo.png', height='60', width='144')
+                        li.side-nav-iiu-logo
+                            img(src='img/iiu-logo.png', height='57', width='207')
+                // /.navbar-collapse
+            block main-content
+    include currentUser
+    include scripts

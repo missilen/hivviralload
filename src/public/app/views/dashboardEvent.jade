@@ -1,0 +1,515 @@
+div(style="background-color:#f2f2f2;" ng-show="contentloaded")
+    .modal-content
+        .modal-header.header_dark
+            .row(style='background-color:#ffffff;')
+                .col-lg-12.col-md-12.col-sm-12
+                    .event-title-cont
+                        h2.h2-create-new(id='myModalLabel')
+                            | {{eventdoc.eventName}}
+                            .save-draft-cont(style='position:relative; float:right; margin-left:10px; margin-top:0px; margin-right:0px;')
+                                button.btn.btn-default.btn-circle2.glyphicon.glyphicon-info-sign(type='button', ng-click='showInfo()' ng-hide="identity.isAuthorized('levelThree')")
+                        br
+                        .small
+                            .p-create-new
+                                strong| Due Date:
+                                i{{eventdoc.eventDueDate | date:'medium'}}
+                            br
+                            .p-create-new
+                                strong| Publish Date: 
+                                i{{eventdoc.eventPublishDate | date:'medium'}}
+                    .save-draft-cont-evt 
+                        button.btn.btn-success(type="button" ng-click="saveCategory('draft')" ng-disabled='continueNav')    
+                            | Save Edits
+                    //.submit-btn-cont
+                        button.btn.btn-success(type="button" ng-click="saveCategory('completed')" ng-if="identity.isAuthorized('levelThree')")
+                            | Submit
+                    .submit-btn-cont
+                        button.btn.btn-success.pull-right(type="button" ng-click="customize('lg',eventdoc, eventData, gridOptions, gridApi)" ng-if="identity.isAuthorized('levelTwo') && readyForPreview")
+                            | Customize Report
+        .modal-body(style='background-color:#f2f2f2;')
+            .row(style='background-color:#f2f2f2; height:100vh;')
+                .col-lg-12.col-md-12.col-sm-12
+                    .tab-container
+                        tabset
+                            tab(ng-repeat="category in eventdoc.categories | filter: filterTabForAnalyst" heading="{{category.name}}" select="setActiveCategory(category.name)" active="tabCategory[$index].active")
+                                .row
+                                    .col-lg-12.col-md-12.col-sm-12
+                                        br
+                                        .row
+                                            .col-lg-6.col-md-6.col-sm-6
+                                                .tab-title-heading
+                                                    img(src='img/notepad-icon.png', width='37', height='32')
+                                                    |   {{category.name}}: by {{category.userAssigned.displayName}}
+                                            .col-lg-6.col-md-6.col-sm-6
+                                                .return-event-cont
+                                                    button.btn.btn-default.coord-btn(type='button' ng-show="!category.statusCompleted && identity.isAuthorized('levelTwo')" ng-click="recallCategory(category)")
+                                                        | Recall from analyst
+                                                .return-event-cont
+                                                    button.btn.btn-default.coord-btn(type="button" ng-click="returnToAnalyst(category)" ng-show="category.statusCompleted && identity.isAuthorized('levelTwo')")
+                                                        | Reassign
+                                                .return-event-cont
+                                                    select.form-control(placeholder='Select Analyst' ng-model='category.userAssigned' ng-options='user as user.displayName for user in users track by user.id' ng-show="category.statusCompleted && identity.isAuthorized('levelTwo')")
+                                                        option(value="category.userAssigned") - Select an analyst -
+                                                .return-event-cont
+                                                    button.btn.btn-success(type="button" ng-click="saveCategory('completed')" ng-if="identity.isAuthorized('levelThree')")
+                                                        | Submit
+                                        br
+                                        hr
+                                        br
+                                        .row
+                                            .col-lg-3.col-md-3.col-sm-3
+                                                .fixedWidthMenu(id="fixmenu" set-class-when-at-top="fix-to-top")
+                                                    ul.nav.nav-pills.nav-stacked(style="background-color:#f2f2f2;")
+                                                        li(ng-repeat="topic in category.topics" ng-class="{active:activeTab=='tab_'+$index}")
+                                                            a(data-target="{{'#tab_'+$index}}" data-toggle="pill"  ng-click="gotoElement(category.name+'_tab_'+$index)" style="cursor:pointer")
+                                                                | {{topic.name}}
+                                            .col-lg-9.col-md-9.col-sm-9
+                                                //div.tab-content
+                                                div.tab-pane2(ng-repeat="topic in category.topics"  ng-class="{active:activeTab=='tab_'+$index}")
+                                                    h3(id="{{category.name+'_tab_'+$index}}")
+                                                        | {{topic.name}}
+                                                    div(ui-tree='options')
+                                                        ul.bullet-disc-nodes(ui-tree-nodes='', ng-model='topic.bullets', data-type='bullet' )
+                                                            li.bullet-disc-node(ng-repeat='bullet in topic.bullets', ui-tree-node='' ng-show="hideFromCoordinator(category)" )
+                                                                .bullet-title.angular-ui-tree-handle-clear(ng-show='!bullet.editing' ng-mouseenter="hoverBullet = true" ng-mouseleave="hoverBullet = false")
+                                                                    a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverBullet" href='', data-nodrag='', ng-click='removeBullet(topic, bullet)')
+                                                                        i.glyphicon.glyphicon-trash
+                                                                    a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverBullet" href='', data-nodrag='', ng-click='editBullet(bullet)')
+                                                                        i.glyphicon.glyphicon-pencil
+                                                                    p
+                                                                        | {{bullet.name}}
+                                                                .bullet-title(data-nodrag='', ng-show='bullet.editing')
+                                                                    textarea.bulletPlaceHoder(type='text', ng-model='bullet.name' ng-keydown='$event.keyCode==13 ? saveBullet(bullet,$event) : null' ng-blur='saveBullet(bullet,$event)')
+                                                                ul.bullet-circle-nodes(ui-tree-nodes='', ng-model='bullet.subBullets', data-type='subBullet')
+                                                                    li.bullet-circle-node(ng-repeat='subBullet in bullet.subBullets', ui-tree-node='' ng-show="hideFromCoordinator($index)")
+                                                                        .subBullet-title.angular-ui-tree-handle-clear(ng-show='!subBullet.editing' ng-mouseenter="hoverSubBullet = true" ng-mouseleave="hoverSubBullet = false")
+                                                                            a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverSubBullet" href='', data-nodrag='', ng-click='removeSubBullet(bullet, subBullet)')
+                                                                                i.glyphicon.glyphicon-trash
+                                                                            a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverSubBullet" href='', data-nodrag='', ng-click='editSubBullet(subBullet)')
+                                                                                i.glyphicon.glyphicon-pencil
+                                                                            div
+                                                                                | &nbsp;&nbsp;{{subBullet.name}}
+                                                                        .subBullet-title(data-nodrag='', ng-show='subBullet.editing')
+                                                                            textarea.bulletPlaceHoder(type='text', ng-model='subBullet.name' ng-keydown='$event.keyCode==13 ? saveSubBullet(subBullet,$event) : null' ng-blur='saveSubBullet(subBullet,$event)')
+                                                                ul.bullet-circle-nodes.angular-ui-tree-nodes(data-nodrag='')
+                                                                    li.bullet-circle-node.angular-ui-tree-node
+                                                                        textarea.bulletPlaceHoder(type='text', ng-model='bullet.newSubBulletName', placeholder='Add sub-bullet. (Hit enter to add next sub-bullet)' ng-keydown='$event.keyCode==13 ? addSubBullet(bullet,$event) : null' ng-blur='addSubBullet(bullet,$event)')
+                                                        ul.angular-ui-tree-nodes.bullet-disc-nodes(data-nodrag='')
+                                                            li.angular-ui-tree-node(ng-hide="hideFromCoordinator(category)")
+                                                                div.awaiting
+                                                                    | Awaiting information from analyst
+                                                            li.angular-ui-tree-node.bullet-disc-node(ng-show="hideFromCoordinator(category)")
+                                                                textarea.bulletPlaceHoder(type='text', ng-model='topic.newBulletName', placeholder='Add bullet. (Hit enter to add next bullet)' ng-keydown='$event.keyCode==13 ? addBullet(topic,$event) : null' ng-blur='addBullet(topic,$event)')
+                                                    div(ng-repeat="subTopic in topic.subTopics")
+                                                        h4
+                                                            | {{subTopic.name}}
+                                                        div(ui-tree='options')
+                                                            ul.bullet-disc-nodes(ui-tree-nodes='', ng-model='subTopic.bullets', data-type='bullet' )
+                                                                li.bullet-disc-node(ng-repeat='bullet in subTopic.bullets', ui-tree-node='' ng-show="hideFromCoordinator(category)" )
+                                                                    .bullet-title.angular-ui-tree-handle-clear(ng-show='!bullet.editing' ng-mouseenter="hoverBullet = true" ng-mouseleave="hoverBullet = false")
+                                                                        a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverBullet" href='', data-nodrag='', ng-click='removeBullet(subTopic, bullet)')
+                                                                            i.glyphicon.glyphicon-trash
+                                                                        a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverBullet" href='', data-nodrag='', ng-click='editBullet(bullet)')
+                                                                            i.glyphicon.glyphicon-pencil
+                                                                        p
+                                                                            | {{bullet.name}}
+                                                                    .bullet-title(data-nodrag='', ng-show='bullet.editing')
+                                                                        textarea.bulletPlaceHoder(type='text', ng-model='bullet.name' ng-keydown='$event.keyCode==13 ? saveBullet(bullet,$event) : null' ng-blur='saveBullet(bullet,$event)')
+                                                                    ul.bullet-circle-nodes(ui-tree-nodes='', ng-model='bullet.subBullets', data-type='subBullet')
+                                                                        li.bullet-circle-node(ng-repeat='subBullet in bullet.subBullets', ui-tree-node='' ng-show="hideFromCoordinator($index)")
+                                                                            .subBullet-title.angular-ui-tree-handle-clear(ng-show='!subBullet.editing' ng-mouseenter="hoverSubBullet = true" ng-mouseleave="hoverSubBullet = false")
+                                                                                a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverSubBullet" href='', data-nodrag='', ng-click='removeSubBullet(bullet, subBullet)')
+                                                                                    i.glyphicon.glyphicon-trash
+                                                                                a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverSubBullet" href='', data-nodrag='', ng-click='editSubBullet(subBullet)')
+                                                                                    i.glyphicon.glyphicon-pencil
+                                                                                div
+                                                                                    | &nbsp;&nbsp;{{subBullet.name}}
+                                                                            .subBullet-title(data-nodrag='', ng-show='subBullet.editing')
+                                                                                textarea.bulletPlaceHoder(type='text', ng-model='subBullet.name' ng-keydown='$event.keyCode==13 ? saveSubBullet(subBullet,$event) : null' ng-blur='saveSubBullet(subBullet,$event)')
+                                                                    ul.bullet-circle-nodes.angular-ui-tree-nodes(data-nodrag='')
+                                                                        li.bullet-circle-node.angular-ui-tree-node
+                                                                            textarea.bulletPlaceHoder(type='text', ng-model='bullet.newSubBulletName', placeholder='Add sub-bullet. (Hit enter to add next sub-bullet)' ng-keydown='$event.keyCode==13 ? addSubBullet(bullet,$event) : null' ng-blur='addSubBullet(bullet,$event)')
+                                                            ul.angular-ui-tree-nodes.bullet-disc-nodes(data-nodrag='')
+                                                                li.angular-ui-tree-node(ng-hide="hideFromCoordinator(category)")
+                                                                    div.awaiting
+                                                                        | Awaiting information from analyst
+                                                                li.angular-ui-tree-node.bullet-disc-node(ng-show="hideFromCoordinator(category)")
+                                                                    textarea.bulletPlaceHoder(type='text', ng-model='subTopic.newBulletName', placeholder='Add bullet. (Hit enter to add next bullet)' ng-keydown='$event.keyCode==13 ? addBullet(subTopic,$event) : null' ng-blur='addBullet(subTopic,$event)')
+                                                    br
+                                                    br                        
+                                //- .row
+                                //-     .col-lg-6
+                                //-             h3 Data binding
+                                //-             .info
+                                //-                 | {{  }}
+                                //-             pre.code.
+                                //-                 {{ eventdoc | json }}   
+                            //DATA TAB
+                            tab(heading="Daily Metrics" select="tabShown = !tabShown;" ng-click="autoResizeHGridack()" deselect="tabShown = !tabShown")
+                                .row
+                                    .col-lg-12.col-md-12.col-sm-12(style='padding-left:35px; padding-right:35px; padding-bottom:15px;' ui-tree='options' drag-enabled="identity.isAuthorized('levelTwo')")
+                                        br
+                                        .row
+                                            .col-lg-9.col-md-9.col-sm-9
+                                                .tab-title-heading
+                                                    img(src='img/web-icon.png', width='37', height='32')
+                                                    |   Daily Metrics
+                                                    button#button_export.btn.btn-default.btn-sm.pull-right(style="color:#337ab7; margin-left:20px;", ng-click='fnExcelReport()')
+                                                        | Export All Data to Excel
+                                        br
+                                        hr
+                                        br
+                                        //-.row
+                                            //-input(type='text', ng-model='grid.newGridName')
+                                            //-|  
+                                            //-button.btn.btn-default(type='button' ng-click='addTable(grid,$event)',style='color:#337ab7;') Add Table  
+                                            //-br
+                                            //-br 
+                                            //-button#button_add.btn.btn-default(ng-click='addColumn()', style='color:#337ab7;', ng-show="eventData.gridData.length > 0 && identity.isAuthorized('levelTwo')") +
+                                            //-button#button_remove.btn.btn-default(ng-click='removeColumn()', style='color:#337ab7;', ng-show="eventData.gridData.length > 0 && identity.isAuthorized('levelTwo')") -
+                                            //-button#addData.btn.btn-default(type='button', ng-click='addRow()', style='color:#337ab7;') Add Row
+                                            //-br
+                                            br
+                                            br
+                                        .row#gridRow
+                                            .panel.panel-default
+                                              .panel-heading(style="text-align:right; font-size:18px;" ng-show="eventData.gridData.length > 0 && identity.isAuthorized('levelTwo')") 
+                                                i Add or Delete Last Column:
+                                                button#button_remove.btn.btn-default(ng-click='removeColumn()', style='color:#337ab7; margin-left:11px; padding-left:13px; padding-right:13px;') -
+                                                button#button_add.btn.btn-default(ng-click='addColumn()', style='color:#337ab7;', ng-show="eventData.gridData.length > 0 && identity.isAuthorized('levelTwo')") +
+                                              .panel-body
+                                                ol(style="margin-top:10px;", ui-tree-nodes='', ng-model='eventData.gridData' )
+                                                    li(ng-repeat='grid in eventData.gridData', ui-tree-node='' on-finish-render="ngRepeatFinished")
+                                                        .topic-title-tables.angular-ui-tree-handle(ng-show='!grid.editing', ng-mouseenter="hoverTopic = true", ng-mouseleave="hoverTopic = false" )
+                                                            a.del-edit-btn.btn.btn-default.btn-sm.pull-right(ng-show="identity.isAuthorized('levelTwo')" href='', data-nodrag='', ng-click='removeTable(grid.gridName)')
+                                                                i.glyphicon.glyphicon-trash
+                                                            a.del-edit-btn.btn.btn-default.btn-sm.pull-right(ng-show="identity.isAuthorized('levelTwo')" href='', data-nodrag='', ng-click='editTableName(grid)')
+                                                                i.glyphicon.glyphicon-edit
+                                                            //a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="identity.isAuthorized('levelTwo')" href='', data-nodrag='', ng-click="isCollapsed[$index] = !isCollapsed[$index]; buildOneGridChartData($index);")
+                                                                i.glyphicon.glyphicon-stats
+                                                            div  {{grid.gridName}}
+                                                        .topic-title-tables.angular-ui-tree-handle(data-nodrag='', ng-show='grid.editing')
+                                                            label.sr-only(for='gridName') Table name
+                                                            input.form-control(type='text', placeholder='Table name', ng-model='grid.gridName' ng-keyup='$event.keyCode==13 ? saveTableName(grid,$event) : null' ng-blur='saveTableName(grid,$event)')
+                                                        ol(style="margin-bottom:11px;", ui-tree-nodes='', ng-model='grid.dailyData', data-type='subTopic')
+                                                                .grid.padding-fix(id="{{'grid_'+$index}}", ui-grid="{rowHeight: 30,data: grid.dailyData, columnDefs : columns, showFooter: false, enableVerticalScrollbar:0,enableHorizontalScrollbar: 0, enableCellSelection: true, enableRowSelection: false, enableCellEditOnFocus: true}", ng-style="getTableHeight(grid,'grid_'+$index)",ui-grid-edit,ui-grid-cellNav,ui-grid-pinning) 
+                                                                //- br
+                                                                //- button#addData.btn.btn-default(type='button', ng-click='addRow(grid)', style='color:#337ab7;') Add New Row to {{grid.gridName}}
+                                                                //- br
+                                                                //div(id="{{'panel_'+$index}}" collapse='!isCollapsed[$index]')
+                                                                    .well.well-lg
+                                                                        highchart(id="{{'chartHC_'+$index}}" config='highChartConfig[$index]')
+                                                                        //br
+                                                                        //canvas(id="{{'chartJS_'+$index}}" tc-chartjs-line chart-options="chartJsLineConfig" chart-data="chartJsData[$index]" auto-legend) 
+                                                                        //canvas(id="{{'chartJS_'+$index}}" width="500" height="300" ) 
+                                                                        //div#js-legend.chart-legend
+                                                                        //br
+                                                                        //div(google-chart='', chart='googleChartObj[$index]', style='{{cssStyle}}')
+                                                        div(ng-show="identity.isAuthorized('levelTwo')")
+                                                            i Add or Delete Last Row:
+                                                            a.del-edit-btn.btn.btn-default(style="color:#337ab7; margin-left:11px; padding-left:13px; padding-right:13px;", ng-show="identity.isAuthorized('levelTwo')" href='', data-nodrag='', ng-click="removeLastRow(grid,'grid_'+$index)")
+                                                                | -
+                                                            a.del-edit-btn.btn.btn-default(style="color:#337ab7;", ng-show="identity.isAuthorized('levelTwo')" href='', data-nodrag='', ng-click="addRow(grid,'grid_'+$index)")
+                                                                | +
+                                                            br
+                                                            br
+                                                ol.angular-ui-tree-nodes(ng-show = "identity.isAuthorized('levelTwo')")
+                                                    li.angular-ui-tree-node
+                                                        .topic-title-tables.angular-ui-tree-handle
+                                                            form.form-inline(role='form')
+                                                                .form-topic
+                                                                    label.sr-only(for='gridName') Table name
+                                                                    input#gridName.form-control(type='text' placeholder='Add new table name' ng-model="grid.newGridName" ng-keyup='$event.keyCode==13 ? addTable(grid,$event) : null' ng-blur='addTable(grid,$event)')
+                                                                //button.btn.btn-default(type='submit', ng-click='addTable(grid)') Add Table  
+                                                br
+                            //CHART TAB
+                            tab(heading="Charts" select="tabShown = !tabShown;" ng-click="populateGrid()" deselect="tabShown = !tabShown")
+                                .row
+                                    .col-lg-12.col-md-12.col-sm-12(style='padding-left:35px; padding-right:35px; padding-bottom:15px;' )
+                                        br
+                                        .row
+                                            .col-lg-9.col-md-9.col-sm-9
+                                                .tab-title-heading
+                                                    img(src='img/web-icon.png', width='37', height='32')
+                                                    |   Charts
+                                        br
+                                        hr
+                                        br
+                                        .row
+                                            .col-lg-12
+                                                p(style='font-style:italic; color:#818181;')
+                                                    | Please select the rows and columns to generate your chart. You can use the Advanced Controls below to have more options for selecting multiple data to generate.
+                                        br
+                                        
+                                        //-.row
+                                            .col-lg-3
+                                                label
+                                                    | Start Date
+                                                .dropdown
+                                                    a#dropdown1.dropdown-toggle(role='button', data-toggle='dropdown', data-target='#', href='')
+                                                        .input-group
+                                                            div.form-control(type='text')
+                                                                | {{chartDataFromDate | date:'MMM d, yyyy'}}
+                                                            span.input-group-addon
+                                                                i.glyphicon.glyphicon-calendar
+                                                    ul.dropdown-menu(role='menu', aria-labelledby='dLabel')
+                                                        datetimepicker(data-on-set-time="fromdateChanged(newDate, oldDate)" data-ng-model='chartDataFromDate', data-datetimepicker-config="{ dropdownSelector: '#dropdown1',startView:'day', minView:'day' }")
+                                            .col-lg-3
+                                                label
+                                                    | End Date
+                                                .dropdown                                                    
+                                                    a#dropdown2.dropdown-toggle(role='button', data-toggle='dropdown', data-target='#', href='')
+                                                        .input-group
+                                                            div.form-control(type='text')
+                                                                | {{chartDataToDate | date:'MMM d, yyyy'}}
+                                                            span.input-group-addon
+                                                                i.glyphicon.glyphicon-calendar
+                                                    ul.dropdown-menu(role='menu', aria-labelledby='dLabel')
+                                                        datetimepicker(data-on-set-time="todateChanged(newDate, oldDate)" data-ng-model='chartDataToDate', data-datetimepicker-config="{ dropdownSelector: '#dropdown2',startView:'day', minView:'day' }")     
+                                            .col-lg-3
+                                                label
+                                                    | &nbsp;
+                                                br
+                                                button.btn.btn-success(type="button" ng-click="refreshCheckedCols()")
+                                                    | GO
+                                        //-br
+                                        //-.row
+                                            .col-lg-12
+                                                button.btn.btn-default(ng-click='selectAllColumns()', style='color:#337ab7;') Select All Columns
+                                                button.btn.btn-default(ng-click='deSelectAllColumns()', style='color:#337ab7;') De-select All Columns
+                                        //-br
+                                        .row
+                                            .col-lg-12(style="overflow:scroll;")
+                                                table(id="dataTable" style="margin-bottom:20px;", border="1")
+                                                    tr(style="background-color:#c6d8ae")
+                                                        td(rowspan="4")
+                                                            | &nbsp;
+                                                        td(style="font-size:20px; font-weight: bold; text-align:center; padding:5px;", colspan="{{columns.length}}")
+                                                            | Daily Metrics
+                                                    tr(style="background-color:#c6d8ae")
+                                                        td(style="text-align:center; padding:3px;", ng-repeat = "col in columns | filter:{field:'!label'}")
+                                                            | {{ col.field | date : 'EEEE'}} 
+                                                    tr(style="background-color:#c6d8ae")
+                                                        td(style="text-align:center; padding:0px 0px 0px 0px; min-width:135px;", ng-repeat = "col in columns | filter:{field:'!label'}")
+                                                            //.checkbox
+                                                            input.cbRemove(ng-show='hideCheckbox' type='checkbox' ng-change='checkedColsChanged(checkedColumns[col.field])' ng-model='checkedColumns[col.field].checked')
+                                                            | &nbsp;{{col.displayName}}
+                                                    tbody(ng-repeat="gridData in eventData.gridData track by $index")
+                                                        tr
+                                                            td(colspan="365" style="background-color:#c6d8ae; font-weight:bold; padding:0px 0 0px 25px;")
+                                                                    | {{gridData.gridName}}
+                                                        tr(ng-repeat="dailyData in gridData.dailyData track by $index")
+                                                            td(style="padding:2px 3px 2px 5px; min-width:250px; !important")
+                                                                input(ng-show='hideCheckbox' id='$parent.$index+"_"+$index' type='checkbox' ng-change='rowChecked($parent.$index,$index)' ng-model='checkedRows[$parent.$index+"_"+$index].checked')
+                                                                | &nbsp; {{dailyData.label}}
+                                                            td(style="padding:2px 0px 2px 0px;text-align:center; line-height:16px;", ng-repeat="col in columns | filter:{field:'!label'}")
+                                                                | {{dailyData[col.field] | number}}
+                                        //.row
+                                            .col-lg-12
+                                                button.btn.btn-default.btn-xs(ng-click='fnExcelReport()')
+                                                    | Export Data Table to Excel
+                                        .row(ng-hide='true')
+                                            .col-lg-12(id="dataTableForPrintDiv" style="overflow:scroll;")
+                                                table(id="dataTable" style="margin-bottom:20px;", border="1")
+                                                    tr
+                                                        td(style="background-color:#c6d8ae" rowspan="3")
+                                                            | &nbsp;
+                                                        td(style="background-color:#c6d8ae;font-size:20px; font-weight: bold; text-align:center; padding:5px;", colspan="{{columns.length-1}}")
+                                                            | Daily Metrics
+                                                    tr
+                                                        td(style="background-color:#c6d8ae;text-align:center; padding:3px;", ng-repeat = "col in columns | filter:{field:'!label'}")
+                                                            | {{ col.field | date : 'EEEE'}} 
+                                                    tr
+                                                        td(style="background-color:#c6d8ae;text-align:center; padding:0px 0px 0px 0px; min-width:135px;", ng-repeat = "col in columns | filter:{field:'!label'}")
+                                                            //.checkbox
+                                                            //input(type='checkbox' ng-change='checkedColsChanged(checkedColumns[col.field])' ng-model='checkedColumns[col.field].checked')
+                                                            | &nbsp;{{col.displayName}}
+                                                    tbody(ng-repeat="gridData in eventData.gridData")
+                                                        tr
+                                                            td(colspan="{{columns.length}}" style="background-color:#c6d8ae; font-weight:bold; padding:0px 0 0px 25px;")
+                                                                    | {{gridData.gridName}}
+                                                        tr(ng-repeat="dailyData in gridData.dailyData")
+                                                            td(style="padding:2px 3px 2px 5px; min-width:250px; !important")
+                                                                //input(id='$parent.$index+"_"+$index' type='checkbox' ng-change='rowChecked($parent.$index,$index)' ng-model='checkedRows[$parent.$index+"_"+$index].checked')
+                                                                | &nbsp; {{dailyData.label}}
+                                                            td(style="padding:2px 0px 2px 0px;text-align:center; line-height:16px;", ng-repeat="col in columns | filter:{field:'!label'}")
+                                                                | {{dailyData[col.field] | number}}
+                                        br
+                                        .row
+                                            .col-lg-12
+                                                button.btn.btn-primary(type='button', ng-click="isCollapsed = !isCollapsed")
+                                                    i(ng-class="{'fa fa-plus-circle white': isCollapsed, 'fa fa-minus-circle white': !isCollapsed}")&nbsp;
+                                                    | Advanced Controls
+                                                div#collapseExample(collapse='isCollapsed')
+                                                    .well(style='margin-top:10px; background-color:#f9f9f9;')
+                                                        .row
+                                                            .col-lg-3
+                                                                label(style='font-weight:normal;')
+                                                                    | Start Date
+                                                                .dropdown
+                                                                    a#dropdown1.dropdown-toggle(role='button', data-toggle='dropdown', data-target='#', href='')
+                                                                        .input-group
+                                                                            div.form-control(type='text')
+                                                                                | {{chartDataFromDate | date:'MMM d, yyyy'}}
+                                                                             span.input-group-addon
+                                                                                i.glyphicon.glyphicon-calendar
+                                                                    ul.dropdown-menu(role='menu', aria-labelledby='dLabel')
+                                                                        datetimepicker(data-on-set-time="fromdateChanged(newDate, oldDate)" data-ng-model='chartDataFromDate', data-datetimepicker-config="{ dropdownSelector: '#dropdown1',startView:'day', minView:'day' }")
+                                                            .col-lg-3
+                                                                label(style='font-weight:normal;')
+                                                                    | End Date
+                                                                .dropdown                                                    
+                                                                    a#dropdown2.dropdown-toggle(role='button', data-toggle='dropdown', data-target='#', href='')
+                                                                        .input-group
+                                                                            div.form-control(type='text')
+                                                                                | {{chartDataToDate | date:'MMM d, yyyy'}}
+                                                                            span.input-group-addon
+                                                                                i.glyphicon.glyphicon-calendar
+                                                                    ul.dropdown-menu(role='menu', aria-labelledby='dLabel')
+                                                                        datetimepicker(data-on-set-time="todateChanged(newDate, oldDate)" data-ng-model='chartDataToDate', data-datetimepicker-config="{ dropdownSelector: '#dropdown2',startView:'day', minView:'day' }")     
+                                                            //.col-lg-3
+                                                                label
+                                                                    | &nbsp;
+                                                                br
+                                                                button.btn.btn-success(type="button" ng-click="refreshCheckedCols()")
+                                                                    | GO
+                                                        br
+                                                        .row
+                                                            .col-lg-12
+                                                                button.btn.btn-default(ng-click='selectAllColumns()', style='color:#337ab7;') Select All Columns
+                                                                button.btn.btn-default(ng-click='deSelectAllColumns()', style='color:#337ab7;') De-select All Columns
+                                                                br
+                                                                br
+                                                                button.btn.btn-default(ng-click='selectAllRows()', style='color:#337ab7;') Select All Rows
+                                                                button.btn.btn-default(ng-click='deSelectAllRows()', style='color:#337ab7;') De-select All Rows
+                                        hr
+                                        .row
+                                            .col-lg-12
+                                                h3
+                                                    | Chart Preview
+                                        .well(style='background-color:#f6f6f0;')
+                                            .row
+                                                .col-lg-7
+                                                    .well(style='background-color:#ffffff;')
+                                                        highchart(id="chartTemp" config='highChartTempConfig')
+                                                    //br
+                                                    //button.btn.btn-default(ng-click='addChart()', style='color:#337ab7;') Save Chart
+                                                    //button.btn.btn-default(ng-click='resetChart();', style='color:#337ab7;') Reset Chart
+                                                .col-lg-5(style="padding-left:20px;")
+                                                    //.well.well-lg
+                                                    div.pull-left(style="width:100%;")
+                                                        .panel.panel-default
+                                                            .panel-heading(style='background-color:#e5e5dc;')
+                                                                h3.panel-title Customize Chart
+                                                            .panel-body
+                                                                |Chart Type&nbsp;&nbsp;
+                                                                select(data-ng-model='highChartTempConfig.options.chart.type', data-ng-options="chartType for chartType in chartTypes")
+                                                                br
+                                                                br
+                                                                |Polar Display &nbsp;
+                                                                input(type='checkbox' ng-model = 'highChartTempConfig.options.chart.polar')
+                                                                br
+                                                                br
+                                                                |Chart Title
+                                                                input.form-control(type='textarea' ng-model='highChartTempConfig.title.text')
+                                                                br
+                                                                |X-Axis Title 
+                                                                input.form-control(type='textarea' ng-model='highChartTempConfig.xAxis.title.text')
+                                                                br
+                                                                |Y-Axis Title 
+                                                                input.form-control(type='textarea' ng-model='highChartTempConfig.options.yAxis[0].title.text')
+                                                                br
+                                                                button.btn.btn-default(ng-click='addChart()', style='color:#337ab7;') Save Chart
+                                                                button.btn.btn-default(ng-click='resetChart();', style='color:#337ab7;') Reset Chart
+                                        hr
+                                        br
+                                        .row
+                                            .col-lg-12
+                                                accordion(style='background-color:#337ab7; color:#ffffff;')
+                                                    accordion-group(style='background-color:#f5f5f5;' is-open="status.open")
+                                                        accordion-heading(style="cursor:pointer")
+                                                            i(ng-class="{'fa fa-plus-circle': !status.open, 'fa fa-minus-circle': status.open}")&nbsp;
+                                                            | Saved Charts
+                                                        div(ng-repeat='chartConfig in customizedDoc.chartConfigs track by $index', style="margin-bottom:30px; background-color:#f5f5f5;")
+                                                            //div.well
+                                                            //- label
+                                                            //-     |Chart Title 
+                                                            //-     input.form-control(type='textarea' ng-model='chartConfig.title.text')
+                                                            //- &nbsp;&nbsp;
+                                                            //- label
+                                                            //-     |Y-axis Title 
+                                                            //-     input.form-control(type='textarea' ng-model='chartConfig.yAxis[0].title.text')
+                                                            //- &nbsp;&nbsp;
+                                                            //- label
+                                                            //-     |X-axis Title 
+                                                            //-     input.form-control(type='textarea' ng-model='chartConfig.xAxis.title.text')
+                                                            .well(style='background-color:#ffffff;')
+                                                                highchart(id="{{'chartHC_'+$index}}" config='chartConfig')
+                                                                br
+                                                                a(ng-click='deleteChart($index)', style='text-decoration:underline; cursor:pointer') Delete Chart
+                                                                //-button.btn.btn-warning(ng-click='deleteChart($index)', style='color:#337ab7;') Delete Chart
+                                                                //-button.btn.btn-warning(ng-click='editChart($index)', style='color:#337ab7;') Edit Chart
+                                        br
+                                        .row
+                                            .col-lg-12
+                                                iframe(id="txtArea1" style="display:none")
+                                        //-.row
+                                            .col-lg-6
+                                                    h3 Data binding
+                                                    .info
+                                                        | {{  }}
+                                                    pre.code.
+                                                        {{ highChartTempConfig | json }}   
+                            //IMAGE UPLOAD TAB
+                            tab(heading="Upload Images" select="tabShown = !tabShown;" deselect="tabShown = !tabShown")
+                                .row
+                                    .col-lg-12.col-md-12.col-sm-12(style='padding-left:35px; padding-right:35px; padding-bottom:15px;br')
+                                        br
+                                        .row
+                                            .col-lg-9.col-md-9.col-sm-9
+                                                .tab-title-heading
+                                                    img(src='img/web-icon.png', width='37', height='32')
+                                                    |  Upload Images
+                                        br
+                                        hr 
+                                        br
+                                        .row
+                                            .col-lg-12
+                                                .well
+                                                    .form(name='uploadForm')
+                                                        fieldset
+                                                            legend New Image
+                                                            br
+                                                            //- input(type='file', ngf-select= '', ng-model='imageFile', name='file', accept='image/*', required='')
+                                                            input(type='file' ng-model='imgFile' base-sixty-four-input accept='.png,.jpg' onLoad='onLoad')
+                                                            
+                                                            br
+                                                            .col-xs-6.col-md-4.col-lg-3
+                                                                div.preview-thumbnail
+                                                                    a.thumbnail
+                                                                        img(id='uploadThumb' ng-show='imgFile != null' data-ng-src='data:image/png;base64,{{imgFile.base64}}')
+                                                        button.btn.btn-primary(ng-click='UploadFile(imgFile)' ng-show='imgFile != null') Upload
+                                        
+                                        br
+                                        .row
+                                            .col-lg-12
+                                                accordion(style='background-color:337ab7; color:#ffffff;')
+                                                    accordion-group(style='background-color:#f5f5f5;' is-open="galleryStatus.open")
+                                                        accordion-heading(style="cursor:pointer")
+                                                            i(ng-class="{'fa fa-plus-circle': !galleryStatus.open, 'fa fa-minus-circle': galleryStatus.open}")&nbsp;
+                                                            | Uploaded Images
+                                                        .row
+                                                            .col-lg-12
+                                                                div.col-xs-12.col-md-12.col-lg-12.thumb(ng-repeat='image in files', style="margin-bottom:10px; background-color:#f5f5f5;")
+                                                                    a.thumbnail
+                                                                        img.img-responsive(data-ng-src="data:image/png;base64,{{image.base64}}")
+                                                                        br
+                                                                    button.btn.btn-default.pull-right(style="color:#337ab7;", ng-click='deleteFile(image,$index)') Delete Image
+                                                                    hr(style="color:#dddddd; background-color:#dddddd; height:1px;")
+
+            .clear-divs
+
+
+            
+
+                            

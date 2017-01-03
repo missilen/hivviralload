@@ -1,0 +1,50 @@
+.row
+											.panel.panel-default
+												.panel-body
+													ol(ui-tree-nodes='', ng-model='eventdoc.gridData', data-type'topic')
+														li(ng-repeat='grid in eventdoc.gridData', ui-tree-node='' , on-finish-render="ngRepeatFinished")
+															.topic-title-tables.angular-ui-tree-handle(ng-show='!grid.editing' ng-mouseenter="hoverTopic = true" ng-mouseleave="hoverTopic = false")
+																a.del-edit-btn.btn.btn-default.btn-sm.pull-right(ng-show="identity.isAuthorized('levelTwo')" href='', data-nodrag='', ng-click='removeTable(grid.gridName)')
+																	i.glyphicon.glyphicon-trash
+																a.del-edit-btn.btn.btn-default.btn-sm.pull-right(ng-show="identity.isAuthorized('levelTwo')" href='', data-nodrag='', ng-click='editTableName(grid)')
+																	i.glyphicon.glyphicon-edit
+																div  {{grid.gridName}}
+															.topic-title-tables.angular-ui-tree-handle(data-nodrag='', ng-show='grid.editing')
+																label.sr-only(for='gridName') Table name
+																input.form-control(type='text', placeholder='enter table name to add', ng-model='grid.gridName' ng-keyup='$event.keyCode==13 ? saveTableName(grid,$event) : null' ng-blur='saveTableName(grid,$event)')
+															ol(ui-tree-nodes='', ng-model='grid.dailyData', data-type='subTopic')
+																li(ng-repeat='subTopic in grid.dailyData', ui-tree-node='' )
+																	.subTopic-title.angular-ui-tree-handle(ng-show='!subTopic.editing' ng-mouseenter="hoverSubTopic = true" ng-mouseleave="hoverSubTopic = false")
+																		a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverSubTopic" href='', data-nodrag='', ng-click='removeLabel(grid, subTopic)')
+																			i.glyphicon.glyphicon-trash
+																		a.del-edit-btn.btn.btn-default.btn-xs.pull-right(ng-show="hoverSubTopic" href='', data-nodrag='', ng-click='editLabel(subTopic)')
+																			i.glyphicon.glyphicon-pencil
+																		div
+																			| {{subTopic.label}}
+																	.subTopic-title.angular-ui-tree-handle(data-nodrag='', ng-show='subTopic.editing')
+																		label.sr-only(for='subTopicName') SubTopic name
+																		input.form-control(type='text', ng-model='subTopic.label', placeholder='enter table item to add' ng-keyup='$event.keyCode==13 ? saveLabel(subTopic,$event) : null' ng-blur='saveLabel(subTopic,$event)')
+															ol.angular-ui-tree-nodes(data-nodrag='')
+																li.angular-ui-tree-node
+																	.subTopic-title.angular-ui-tree-handle
+																		form.form-inline(role='form')
+																			.form-topic
+																				label.sr-only(for='subTopicName') SubTopic name
+																				input.form-control(type='text', ng-model='grid.newSubTopicName', placeholder='enter table item to add' ng-keyup='$event.keyCode==13 ? addLabel(grid,$event) : null' ng-blur='addLabel(grid,$event)')
+																	//.grid.padding-fix(id="{{'grid_'+$index}}", ui-grid="{rowHeight: 30,data: grid.dailyData, columnDefs : columns, showFooter: false, enableVerticalScrollbar:0,enableHorizontalScrollbar: 0, enableCellSelection: true, enableRowSelection: false, enableCellEditOnFocus: true}", ng-style="getTableHeight(grid,'grid_'+$index)",ui-grid-auto-resize,ui-grid-edit,ui-grid-cellNav,ui-grid-pinning) 
+																	//- br
+																	//- button#addData.btn.btn-default(type='button', ng-click='addRow(grid)', style='color:#337ab7;') Add New Row to {{grid.gridName}}
+																	//- br
+																	br
+															//i Edit Rows:
+															//a.del-edit-btn.btn.btn-default(style="color:#337ab7; margin-left:11px; padding-left:13px; padding-right:13px;", ng-show="identity.isAuthorized('levelTwo')" href='', data-nodrag='', ng-click="removeLastRow(grid,'grid_'+$index)")
+															//	| -
+															//a.del-edit-btn.btn.btn-default(style="color:#337ab7;", ng-show="identity.isAuthorized('levelTwo')" href='', data-nodrag='', ng-click="addRow(grid,'grid_'+$index)")
+															//	| +
+													ol.angular-ui-tree-nodes
+														li.angular-ui-tree-node
+															.topic-title-tables.angular-ui-tree-handle
+																form.form-inline(role='form')
+																	.form-topic
+																		label.sr-only(for='gridName') Table name
+																		input#gridName.form-control(type='text' placeholder='enter table name to add' ng-model="grid.newGridName" ng-keyup='$event.keyCode==13 ? addTable(grid,$event) : null' ng-blur='addTable(grid,$event)')
