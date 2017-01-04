@@ -11,6 +11,7 @@
   "author": "Informatics Inovation Unit",
   "license": "Apache v2",
   "dependencies": {
+    "angular-cookies": "^1.6.1",
     "angular-loading-bar": "*",
     "angular-scroll": "*",
     "bcrypt-nodejs": "*",

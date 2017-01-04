@@ -1,4 +1,4 @@
-commSphereApp.controller('dashCtrl', ['$scope', '$modal','$routeParams','ngEvents','$http','ngIdentity','$log','$filter','$window','$route', function($scope, $modal,$routeParams,ngEvents,$http,ngIdentity,$log,$filter,$window,$route) {
+hivViralApp.controller('dashCtrl', ['$scope', '$rootScope','$modal','$routeParams','ngEvents','$http','ngIdentity','$log','$filter','$window','$route','ngPatient', function($scope,$rootScope, $modal,$routeParams,ngEvents,$http,ngIdentity,$log,$filter,$window,$route,ngPatient) {
 $("body").css("background-color", "#f7f7f7;");
 $scope.identity = ngIdentity
 $scope.$parent.activeMenu='dashboard';
@@ -9,40 +9,33 @@ $scope.sortType = "dateCreated";
 $scope.totalInstances = 0;
 $scope.itemsPerPage = 15;
 $scope.currentPage = 1;
-//Filtering events for analysts
-if($scope.identity.isAuthorized('levelThree')) {  //Filtering events for analysts
 
-  $http.get('/api/events/analyst/'+$scope.identity.currentUser._id).then(function(res){
-       if(res.data) {
-           $scope.instances=res.data;
-           //$scope.filteredInstances = $filter('searchAll')($scope.instances,'');
-           $scope.totalInstances = $scope.instances.length;
-           $scope.beginItem = (($scope.currentPage - 1) * $scope.itemsPerPage);
-           $scope.endItem = $scope.beginItem + $scope.itemsPerPage;
-           //$scope.filteredInstances = $filter('searchAll')($scope.instances,'').slice(beginItem,endItem);
-           $scope.sortInstances();
-           } else {
-               alert('no data received');
-           }
-  });
-    
-} else {
 
-  $http.get('/api/events/active').then(function(res){
-       if(res.data) {
-           $scope.instances=res.data;
-           getCompletionStatus();
-           //$scope.filteredInstances = $filter('searchAll')($scope.instances,'');
-           $scope.totalInstances = $scope.instances.length;
-           $scope.beginItem = (($scope.currentPage - 1) * $scope.itemsPerPage);
-           $scope.endItem = $scope.beginItem + $scope.itemsPerPage;
-           //$scope.filteredInstances = $filter('searchAll')($scope.instances,'').slice(beginItem,endItem);
-           $scope.sortInstances();
-           } else {
-               alert('no data received, assign new id');
-           }
-      });
-  }
+  ngPatient.getPatientList().then(function(res){
+        if (res.results){
+            $scope.patientList = [];
+            var uniquePatients = _.uniq(res.results, function(x){
+                return x.patient.display;
+            });
+
+            uniquePatients.forEach(function(patient) {
+                ngPatient.getPatientDetail(patient.patient.uuid).then(function(patientResult){
+
+                    $scope.patientList.push({
+                        patientId: patientResult.display.split('-')[0].trim(),
+                        name: patientResult.display.split('-')[1].trim(),
+                        birthDate: patientResult.person.birthdate,
+                        uuid: patientResult.uuid,
+                        identifiers: patientResult.identifiers,
+                        links: patientResult.links
+                    })
+                })
+
+            })
+            //          console.log($scope.patientList);
+            $scope.totalPatients = $scope.patientList.length;
+        }
+    })
 
 
 $scope.sortInstances = function(sortType) {

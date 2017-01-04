@@ -1,16 +1,25 @@
-var passport = require('passport');
 var paths = require('../config/config');
+var restClient = require('node-rest-client').Client;
+
+var rootUrl = paths.openmrsPath;
+
 
 exports.authenticateUser = function(req, res, next) {
-  var auth = passport.authenticate('local', function(err, user) {
-    if(err) {return next(err);}
-    if(!user) { res.send({success:false})}
-    req.logIn(user, function(err) {
-      if(err) {return next(err);}
-      res.send({success:true, user: user});
-    })
-  })
-  auth(req, res, next);
+  console.log('req body',req.body);
+  var options_auth = { user: req.body.username, password:req.body.password };
+  var client = new restClient(options_auth);
+    var service = 'ws/rest/v1/session';
+    var urlResource = rootUrl+service;
+    client.get(urlResource, function (data,response){
+        if (data.error) {
+            res.send({success:false})
+        }
+        else {
+            res.send({success:true, authenticateData: data})
+        }
+
+    });
+
 };
 
 exports.requiresApiLogin = function(req, res, next) {
@@ -34,6 +43,3 @@ exports.requiresRole = function() {
   }
 }
 
-function setAuthorizationHeader(username,password) {
-    $http.defaults.headers.common.Authorization = 'Basic ' + base64.encode(username + ':' + password);
-}

@@ -1,0 +1,46 @@
+#page-wrapper
+    .container-fluid
+        // Page Heading
+        .row
+            .header.col-lg-12
+                div
+                    span(style='font-size: 20pt; font-weight: bold;') Patients
+                    button.btn.btn-primary(type='button', ng-click="createPatient('lg',null,true)", style='float: right;') Add Patient
+                hr
+        // Page Content
+        .row
+            .col-lg-12
+                .table-responsive
+                    table.table.table-hover.tableCustom
+                        thead
+                            tr
+                                th
+                                    a(href='', ng-click="sortType = 'patientId'; sortReverse = !sortReverse; sortPatient('patientId')")
+                                        | Patient ID
+                                        span.fa.fa-caret-down(ng-show="sortType == 'patientId' && !sortReverse")
+                                        span.fa.fa-caret-up(ng-show="sortType == 'patientId' &&  sortReverse")
+                                th
+                                    a(href='', ng-click="sortType = 'name'; sortReverse = !sortReverse; sortPatient('name')")
+                                        | Name
+                                        span.fa.fa-caret-down(ng-show="sortType == 'name' && !sortReverse")
+                                        span.fa.fa-caret-up(ng-show="sortType == 'name' &&  sortReverse")
+                                th
+                                    a(href='', ng-click="sortType = 'birthDate'; sortReverse = !sortReverse; sortPatient('birthDate')")
+                                        | Day of Birth
+                                        span.fa.fa-caret-down(ng-show="sortType == 'birthDate' && !sortReverse")
+                                        span.fa.fa-caret-up(ng-show="sortType == 'birthDate' &&  sortReverse")
+                                th
+                                    a(href='') Status
+                        tbody
+                            tr(ng-repeat='patient in filpatients =(patientList | searchAll : $parent.searchText) | limitTo: itemsPerPage : beginItem ')
+                                td(ng-class-odd="'tableStripe'") {{patient.patientId}}
+                                td(ng-class-odd="'tableStripe'") {{patient.name}}
+                                td(ng-class-odd="'tableStripe'") {{patient.birthDate | date:'MM/dd/yyyy' }}
+                                // <td ng-class-odd="'tableStripe'"><a ng-href="#" ng-click="showPatient(patient.uuid)">View Patient</a></td>
+                                // <td ng-class-odd="'tableStripe'"><a href="#/patientDetail/{{patient.uuid}}">View Patient</a></td>
+                                td(ng-class-odd="'tableStripe'")
+                                    a(ui-sref='patientDetail({uuid:patient.uuid})') View Patient
+        .row(ng-show='filpatients.length > itemsPerPage')
+            .col-lg-12
+                .text-center
+                    pagination.pagination-sm(total-items='filpatients.length', items-per-page='itemsPerPage', ng-model='currentPage', max-size='maxsize', boundary-links='true', ng-change='pageChanged()', previous-text='‹', next-text='›', first-text='«', last-text='»')

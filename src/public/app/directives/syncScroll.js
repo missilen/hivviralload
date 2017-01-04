@@ -1,4 +1,4 @@
-commSphereApp.directive('syncScroll', [function() {
+hivViralApp.directive('syncScroll', [function() {
     var directive = {
         link: link
     }

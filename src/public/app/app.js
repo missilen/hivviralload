@@ -1,5 +1,6 @@
-var commSphereApp = angular.module('app', [
+var hivViralApp = angular.module('app', [
   'ngRoute'
+  ,'ui.router'
   ,'ngResource'
   ,'ngAnimate'
   ,'ngSanitize'
@@ -11,6 +12,7 @@ var commSphereApp = angular.module('app', [
   ,'ngFileUpload'
   ,'naif.base64'
   ,'base64'
+  ,'ngCookies'
   //,'chart.js'
   //,'tc.chartjs'
   //,'googlechart'
@@ -37,7 +39,7 @@ var routeRoleChecks = {
 
 
 //to prevent IE caching
-commSphereApp.config([
+hivViralApp.config([
     '$httpProvider','$logProvider', function ($httpProvider,$logProvider) {
          $logProvider.debugEnabled(false);
         // Initialize get if not there
@@ -53,7 +55,7 @@ commSphereApp.config([
     }
 ]);
 
-commSphereApp.config(['$routeProvider', '$locationProvider', 
+hivViralApp.config(['$routeProvider', '$locationProvider',
   function($routeProvider,$locationProvider) {
     $routeProvider.
     when('/dashboard/event/:id', {
@@ -63,19 +65,8 @@ commSphereApp.config(['$routeProvider', '$locationProvider',
         resolve : routeRoleChecks.levelTwoOrThree
     }).
     when('/dashboard', {
-        templateUrl : '/partials/dashboard',
+        templateUrl : '/partials/patientDashboard',
         controller  : 'dashCtrl',
-        resolve : routeRoleChecks.levelTwoOrThree  
-    }).
-      when('/dashboard/drafts', {
-        templateUrl : '/partials/dashboardDrafts',
-        controller  : 'dashDraftsCtrl',
-        resolve : routeRoleChecks.levelTwoOrThree
-    }).
-    when('/dashboard/archives', {
-        templateUrl : '/partials/dashboardArchives',
-        controller  : 'dashArchivesCtrl',
-        resolve : routeRoleChecks.levelTwoOrThree
     }).
     when('/admin', {
         templateUrl: '/partials/admin',
@@ -93,10 +84,10 @@ commSphereApp.config(['$routeProvider', '$locationProvider',
     //$locationProvider.html5Mode(true);
 }]);
 
-angular.module('app').run(function($rootScope,$location) {
+angular.module('app').run(function($rootScope,$location,$cookies) {
   $rootScope.$on('$routeChangeError', function(evt,current, previous,rejection) {
     if(rejection === 'not authorized'){
       $location.path('/login');
     }
-  }) 
+  })
 })

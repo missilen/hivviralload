@@ -1,9 +1,10 @@
-commSphereApp.controller('rootCtrl', ['$scope', '$rootScope','$modal','$routeParams','ngEvents','ngAuth','$location','ngIdentity','$route','$log','$http', function($scope, $rootScope, $modal,$routeParams,ngEvents,ngAuth, $location, ngIdentity,$route,$log,$http) {
+hivViralApp.controller('rootCtrl', ['$scope', '$rootScope','$modal','$routeParams','ngEvents','ngAuth','$location','ngIdentity','$route','$log','$http', function($scope, $rootScope, $modal,$routeParams,ngEvents,ngAuth, $location, ngIdentity,$route,$log,$http) {
 $rootScope.continueNav = true;
 $("#wrapper").show();
 $scope.activeMenu='';
 $scope.searchText='';
 $scope.identity = ngIdentity;
+console.log($scope.identity);
 
 if($scope.identity.currentUser === undefined){  //changed background color based on authenticated or not
   $("body").css("background-color", "#2a2d33;");

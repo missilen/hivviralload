@@ -1,4 +1,4 @@
-  commSphereApp.service('ngEventIdService', function($http,$q) {
+  hivViralApp.service('ngEventIdService', function($http,$q) {
 
 	return { 
 		nameExisted : function(eventName) {

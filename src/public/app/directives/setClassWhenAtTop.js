@@ -1,4 +1,4 @@
-commSphereApp.
+hivViralApp.
 directive('setClassWhenAtTop', function ($window) {
     var $win = angular.element($window); // wrap window object as jQuery object
 

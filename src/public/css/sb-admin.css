@@ -26,6 +26,7 @@ body {
 }
 
 #page-wrapper {
+    margin-left: auto;
     width: 100%;
     padding: 0;
     background-color: #fff;
@@ -126,7 +127,7 @@ ul.alert-dropdown {
         border: none;
         border-radius: 0;
         overflow-y: auto;
-        background-color: #2a2d33;
+        background-color: #386892;
         bottom: 0;
         overflow-x: hidden;
         padding-bottom: 40px;
@@ -139,7 +140,7 @@ ul.alert-dropdown {
     .side-nav li a:hover,
     .side-nav li a:focus {
         outline: none;
-        background-color: #404248 !important;
+        background-color: #2a6fa7 !important;
 		border-bottom: 1px solid #4d4f56;
     }
 }
@@ -170,20 +171,19 @@ ul.alert-dropdown {
 }
 .side-nav-search {
 	width: 234px;
-	background-color:#2a2d33;
-	
+	background-color:#386892;
 	display:block;
 	padding:20px 0 20px 0px;
 	
 }
 .side-nav-main-tab {
 	width: 234px;
-	background-color:#2a2d33;
-	color:#5f5858;
+	background-color:#386892;
+	color: #2a6fa7;
 	display:block;
 	padding:15px 15px 10px 15px;
 	text-decoration:none;
-	border-bottom: 1px solid #4d4f56;
+	border-bottom: 1px solid #5ea0d2;
 	font-size:12px;
 }
 .side-nav-settings {
@@ -315,7 +315,7 @@ ul.alert-dropdown {
 	margin: 40px 0 20px;
 	padding-bottom:9px;
 }
-.create-event-button {
+.create-patient-button {
 	float:right; 
 	position:relative; 
 	margin-top:20px; 

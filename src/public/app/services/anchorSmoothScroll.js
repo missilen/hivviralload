@@ -1,4 +1,4 @@
-commSphereApp.service('anchorSmoothScroll', function(){
+hivViralApp.service('anchorSmoothScroll', function(){
     
     this.scrollTo = function(eID) {
 

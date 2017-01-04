@@ -8,7 +8,8 @@ var reports = require('../controllers/reports');
 // var multer = require('multer');
 var media = require('../controllers/media');
 var fs = require('fs');
-var auth = require('./auth');
+//var auth = require('./auth');
+var openmrsAuth = require('./openMRSAuth');
 var mongoose = require('mongoose'),
     User = mongoose.model('User');
 
@@ -58,8 +59,8 @@ module.exports = function(app) {
     res.render('../../public/app/views/' + req.params);
   });
 
-  app.post('/login', auth.authenticate);
-
+  // app.post('/login', auth.authenticate);
+  app.post('/openmrslogin',openmrsAuth.authenticateUser);
   app.post('/logout', function(req, res) {
     req.logout();
     res.end();

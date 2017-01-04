@@ -25,8 +25,7 @@ angular.module('app').controller('loginCtrl',function($scope,$http,ngIdentity,ng
 	//
 	// };
     $scope.login = function(username, password){
-	    ng
-        ngAuth.authenticateUser(username,password).then(function(success) {
+	    ngOpenMRSAuth.authenticateUser(username,password).then(function(success) {
 
             if(success) {
                 if($scope.identity.currentUser.isLevelTwo()){

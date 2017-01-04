@@ -1,14 +1,16 @@
 /**
  * Created by trungnguyen on 11/29/16.
  */
-hivViralApp.factory('ngPatient', function($http, $location, $browser) {
+hivViralApp.factory('ngPatient', function($http, $location, $browser,$rootScope,$cookies) {
 
     //var rootUrl = 'http://localhost:8080/openmrs-standalone/';
-    var url = $location.$$absUrl;
-    var rootUrl = url.split('owa')[0];
+    var globals = JSON.parse($cookies.get('globals'));
+    var url = globals.currentUser.links[0].uri;
+
+    var rootUrl = url.split('ws')[0];
     var patientService = {
         getPatientDetail: function(patientUUID) {
-            var querystr = patientUUID+'?v=full';
+            var querystr = patientUUID+'?v=full'+';jsessionid='+globals.sessionid;
             var service = 'ws/rest/v1/patient/';
             var urlResource = rootUrl+service+querystr;
             var promise = $http.get(urlResource).then(function (response1) {
@@ -18,7 +20,7 @@ hivViralApp.factory('ngPatient', function($http, $location, $browser) {
             return promise;
         } ,
         getPatientList : function() {
-        var querystr = '?v=default&limit=100';
+        var querystr = '?v=default&limit=100'+';jsessionid='+globals.sessionid;
         var service = 'ws/rest/v1/visit';
         var urlResource = rootUrl+service+querystr;
         var promise = $http.get(urlResource).then(function (response) {

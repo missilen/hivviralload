@@ -10,18 +10,21 @@ angular.module('app').factory('ngIdentity', function($window, ngUser) {
       return !!this.currentUser;
     },
     isAuthorized: function(role) {
-      if (role == 'levelThree') {
-        return !!this.currentUser && this.currentUser.roles[2].enabled;
-      }
-      if (role == 'levelTwo') {
-        return !!this.currentUser && this.currentUser.roles[1].enabled;
-      }
-      if (role == 'levelOne') {
-        return !!this.currentUser && this.currentUser.roles[0].enabled;
-      }
-      if (role == 'levelTwoOrThree') {
-        return !!this.currentUser && (this.currentUser.roles[2].enabled || this.currentUser.roles[1].enabled);
-      }
+      return true;
+      // if (role == 'levelThree') {
+      //   return !!this.currentUser && this.currentUser.roles[2].enabled;
+      // }
+      // if (role == 'levelTwo') {
+      //   return !!this.currentUser && this.currentUser.roles[1].enabled;
+      // }
+      // if (role == 'levelOne') {
+      //   return !!this.currentUser && this.currentUser.roles[0].enabled;
+      // }
+      // if (role == 'levelTwoOrThree') {
+      //   //return !!this.currentUser && (this.currentUser.roles[2].enabled || this.currentUser.roles[1].enabled);
+      //     return true;
+      // }
+
     },
     getRoleName: function() {
       for(role in this.currentUser.roles) {

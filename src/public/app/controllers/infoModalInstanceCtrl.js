@@ -1,3 +1,3 @@
-commSphereApp.controller('infoModalInstanceCtrl',['$scope','$modal', function ($scope, $modal) {
+hivViralApp.controller('infoModalInstanceCtrl',['$scope','$modal', function ($scope, $modal) {
 
 }]);

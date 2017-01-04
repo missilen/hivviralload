@@ -8,54 +8,48 @@ body {
 
 }
 
-
-.notesPlaceholder:-moz-placeholder {
-  color: #ccc;
-  opacity: 1;
-  font-style: italic;
-  font-size: 12px;
-  font-weight: normal;
-  width:350px;
-}
-.notesPlaceholder:-ms-input-placeholder {
-  color: #ccc;
-  opacity: 1;
-  font-style: italic;
-  font-size: 12px;
-  font-weight: normal;
-  width:350px;
-}
-.notesPlaceholder:-webkit-input-placeholder {
-  color: #ccc;
-  opacity: 1;
-  font-style: italic;
-  font-size: 12px;
-  font-weight: normal;
-  width:350px;
+.userDisplay {
+    float: right;
+    position: relative;
+    margin-right: 20px;
+    font-size: 14pt;
+    font-weight: bold;
+    vertical-align: top;
 }
 
+.app-title {
+    font-size: 20pt;
+    margin-top: 20px;
+    position : relative;
+    margin-left: 20px;
 
-.bulletPlaceHoder::-moz-placeholder {
-  color: #ccc;
-  opacity: 1;
-  font-style: italic;
-  font-size: 12px;
-  font-weight: normal;
+    color: darkorange;
 }
-.bulletPlaceHoder:-ms-input-placeholder {
-  color: #ccc;
-  opacity: 1;
-  font-style: italic;
-  font-size: 12px;
-  font-weight: normal;
+
+.section {
+    border: 1px solid #009d8e;
+    padding: 2px;
+    text-align: left;
+    margin-bottom: 1em;
 }
-.bulletPlaceHoder::-webkit-input-placeholder {
-  color: #ccc;
-  opacity: 1;
-  font-style: italic;
-  font-size: 12px;
-  font-weight: normal;
+.sectionHeader {
+    background-color : #009d8e;
+    color: white;
+    display: block;
+    padding: 2px;
+    font-weight: bold;
 }
+table.baseline-aligned td {
+    vertical-align: baseline;
+}
+
+.taskList {
+    color : whitesmoke;
+}
+.taskLinkColor {
+    color : #ffffff; !important;
+}
+
 
 .glyphicon-info-sign:before {
   content: "\e086";

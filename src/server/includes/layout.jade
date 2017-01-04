@@ -23,42 +23,39 @@ html(lang="en" ng-app="app")
     body(ng-controller='rootCtrl')
         #wrapper(style="display:none")
             // Navigation
-            nav.navbar.navbar-inverse.navbar-fixed-top.ng-cloak(role='navigation' ng-show="identity.isAuthenticated()") 
+            nav.navbar.navbar-inverse.navbar-fixed-top.ng-cloak(role='navigation')
                 // Brand and toggle get grouped for better mobile display
                 .navbar-header.ng-cloak
-                    img(src='img/comm-serve-logo.png', height='71', width='234')
+                    span.app-title HIV Viral Load
+                    span Monitoring System
+                .userDisplay
+                    | Welcome, {{rootscope.global.user.person.display}}
                 // Top Menu Items
-                .create-event-button
-                    button.btn.btn-primary.ng-cloak(type='button' ng-click="createEvent('lg',null,true)" ng-show="identity.isAuthorized('levelTwo')") Create New Event
-                .create-event-button
-                    button.btn.btn-primary.ng-cloak(type='button' ng-click="showAvailEvents('lg')" ng-show="identity.isAuthorized('levelTwo')") Create from Existing Event
                 // Sidebar Menu Items - These collapse to the responsive navigation menu on small screens
                 .collapse.navbar-collapse.navbar-ex1-collapse.ng-cloak
                     ul.nav.navbar-nav.side-nav.ng-cloak
-                        li.side-nav-welcome( ng-show="identity.isAuthenticated()")
-                            i.fa.fa-fw.fa-user.ng-cloak
-                            |  Hello, {{identity.currentUser.displayName}}
-                            br
-                            .role-style 
-                                | ({{identity.isAuthenticated() ? identity.getRoleName(): null}})
                         li.side-nav-search
                             .col-md-12
                                 .right-inner-addon
                                     i.fa.fa-fw.fa-search
-                                    input.form-control(ng-model="searchText" type='search', placeholder='Search Events', style='background-color:#44474c; border: 1px thin; border-color:#212328; color:#aeaeae; font-weight:normal;')
+                                    input.form-control(ng-model='searchText', type='search', placeholder='Search', style='background-color:white; border: 1px thin; border-color:#212328; color:#aeaeae; font-weight:normal;')
+
                         li.side-nav-main-tab
-                            //i.fa.fa-fw.fa-home
-                            |   EVENTS
-                        li
-                            a(href='/#/') Active
-                        li(ng-show="identity.isAuthorized('levelTwo')")
-                            a(href='/#/dashboard/drafts') Drafts
-                        li(ng-show="identity.isAuthorized('levelTwo')")
-                            a(href='/#/dashboard/archives') Archived
+                        li.taskList
+                            a.taskLinkColor(ui-sref='patientList')
+                                i.fa.fa-list-ul(aria-hidden='true')
+                                | &nbspPatient List
+                        li.taksList
+                            a(ui-sref='tasks')
+                                i.fa.fa-check-square-o(aria-hidden='true')
+                                | &nbspTasks
+                        li.taskList
+                            a(ui-sref='reports')
+                                i.fa.fa-file-text-o(aria-hidden='true')
+                                | &nbspReports
                             br
                         li.side-nav-settings
                             //i.fa.fa-fw.fa-cog
-                            |   SETTINGS
                         li
                             a(href='/#/admin' ng-show="identity.isAuthorized('levelTwo')") Admin
                         li

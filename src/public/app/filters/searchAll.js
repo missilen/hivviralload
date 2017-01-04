@@ -1,6 +1,6 @@
 /// <reference path="../../../typings/angularjs/angular.d.ts"/>
 // custom search filter for active dashboard
-commSphereApp.filter('searchAll', function($filter) {
+hivViralApp.filter('searchAll', function($filter) {
   return function(instances,searchText) {
     var searchRegx = new RegExp(searchText, "i");
     if (searchText == undefined || searchText == ''){

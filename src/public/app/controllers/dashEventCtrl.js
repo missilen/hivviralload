@@ -1987,93 +1987,12 @@ $scope.resetChart  = function() {
 
 }
 
-//Export to excel
-  // $scope.exportToExcel = function(tableId) { 
-  //     $scope.exportHref = ngExcelExport.tableToExcel(tableId, 'sheet 1');
-  //     $timeout(function() {
-  //       location.href = $scope.exportHref;
-  //     }, 100); // trigger download
-
-  // }
-
-  $scope.exportToExcel = function() {
-    $('#dataTableForPrint').table2excel({
-      exclude: ".excludeThisClass",
-      name: "Worksheet Name",
-      filename: "SomeFile" //do not include extension
-    });
 
 
 
-  };
-
-$scope.fnExcelReport = function() {
-    
-  console.log("Table generation");
-       // var tab_text="<table border='2px'><tr bgcolor='#87AFC6'>";
-       // var textRange; var j=0;
-    var tab_text = document.getElementById('dataTableForPrintDiv').innerHTML; // id of table
-
-    console.log(tab_text);
-    // for(j = 0 ; j < tab.rows.length ; j++) 
-    // {     
-    //       tab_text=tab_text+tab.rows[j].innerHTML+"</tr>";
-    //       //tab_text=tab_text+"</tr>";
-    // }
-
-    // tab_text=tab_text+"</table>";
-    // tab_text= tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
-    // tab_text= tab_text.replace(/<img[^>]*>/gi,""); // remove if u want images in your table
-    //             tab_text= tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
-
-   var ua = window.navigator.userAgent;
-  var msie = ua.indexOf("MSIE "); 
-
-     if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
-        {
-               txtArea1.document.open("txt/html","replace");
-               txtArea1.document.write(tab_text);
-               txtArea1.document.close();
-               txtArea1.focus(); 
-                sa=txtArea1.document.execCommand("SaveAs",true,$scope.eventdoc.eventName+"-Daily Metrics.xls");
-              }  
-      else                 //other browser not tested on IE 11
-          sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));  
 
 
-    return (sa);
-  }
 
-$scope.TableToExcel=function(tableid)
-{
-  var id = $('[id$="' + "dataTableForPrint" + '"]');
-  var strCopy = $('<div></div>').html(id.clone()).html(); window.clipboardData.setData("Text", strCopy);
-  var objExcel = new ActiveXObject("Excel.Application");
-  objExcel.visible = false; var objWorkbook = objExcel.Workbooks.Add; var objWorksheet = objWorkbook.Worksheets(1); objWorksheet.Paste; objExcel.visible = true;
-}
-
-$scope.CreateExcelSheet=function()
-{
-  var x= document.getElementById( "dataTableForPrint" ).rows;
-  
-  var xls = new ActiveXObject("Excel.Application");
-
-  xls.visible = true;
-  xls.Workbooks.Add
-  for (i = 0; i < x.length; i++)
-  {
-  var y = x[i].cells;
-  
-  for (j = 0; j < y.length; j++)
-  {
-  xls.Cells( i+1, j+1).Value = y[j].innerText;
-  }
-  }
-  xls.Visible = true;
-  xls.UserControl = true;
-
-  return xls;
-}
 
   $scope.onLoad = function (e, reader, file, fileList, fileOjects, fileObj) {
     console.log(fileObj);
