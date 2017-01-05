@@ -3,7 +3,7 @@ hivViralApp.controller('dashDraftsCtrl', ['$scope', '$modal','$routeParams','ngE
 $scope.$parent.activeMenu='drafts';
 $scope.sortReverse=false;
 $scope.sortType = "dateCreated";
-$scope.totalInstances = 0;
+$scope.totalPatients = 0;
 $scope.itemsPerPage = 15;
 $scope.currentPage = 1;
 
@@ -14,7 +14,7 @@ $http.get('/api/events/drafts').then(function(res){
      if(res.data) {
          $scope.instances=res.data;
          //$scope.filteredInstances = $filter('searchAll')($scope.instances,'');
-         $scope.totalInstances = $scope.instances.length;
+         $scope.totalPatients = $scope.instances.length;
           $scope.beginItem = (($scope.currentPage - 1) * $scope.itemsPerPage);
           $scope.endItem = $scope.beginItem + $scope.itemsPerPage;
   //      $scope.filteredInstances = $scope.instances.slice(beginItem,endItem);
@@ -89,10 +89,10 @@ $scope.deleteDraft = function (draftInstance) {
 //              var endItem = beginItem + $scope.itemsPerPage;
 //              $scope.filteredInstances = $filter('searchAll')($scope.instances,searchText).slice(beginItem,endItem);
 //             if (searchText =='') {
-//                $scope.totalInstances = $scope.instances.length;
+//                $scope.totalPatients = $scope.instances.length;
 //             }
 //             else {
-//                $scope.totalInstances = $scope.filteredInstances.length;
+//                $scope.totalPatients = $scope.filteredInstances.length;
 //             }
           
 //         }
@@ -149,7 +149,7 @@ function compareDesc(a,b) {
 }
 
 $scope.pageCount = function () {
-    return Math.ceil($scope.totalInstances / $scope.itemsPerPage);
+    return Math.ceil($scope.totalPatients / $scope.itemsPerPage);
   };
 
 $scope.setPage = function (pageNo) {

@@ -41,12 +41,10 @@ angular.module('app').factory('ngOpenMRSAuth', function($location, $http, $rootS
                 ngIdentity.isAuthenticated();
                 $rootScope.globals = {
                     currentUser: user,
-                    sessionid : response.data.authenticateData.sessionId,
+                    sessionId : response.data.authenticateData.sessionId,
                     authenticated : response.data.authenticateData.authenticated
                 };
-                var cookieExp = new Date();
-                cookieExp.setDate(cookieExp.getDate() + 7);
-                $cookies.putObject('globals', $rootScope.globals, { expires: cookieExp });
+                $cookies.putObject('globals', $rootScope.globals);
                 dfd.resolve(true);
             } else {
                 dfd.resolve(false);

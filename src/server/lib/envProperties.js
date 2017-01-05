@@ -9,6 +9,7 @@ module.exports = {
     USESSL : 'false',
     SSL_CERT:  './server/utilities/cert.pem',
     SSL_KEY:  './server/utilities/key.pem',
-    SSL_BUNDLE: './server/utilities/gd_bundle-g2.crt'
-
+    SSL_BUNDLE: './server/utilities/gd_bundle-g2.crt',
+    openmrsuser : 'Admin',
+    openmrspassword : 'Admin123'
 };

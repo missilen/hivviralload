@@ -220,7 +220,7 @@ $scope.sortReverse=false;
 $scope.sortType = "dateCreated";
 
 //setup pagination here
-$scope.totalInstances = 0;
+$scope.totalPatients = 0;
 $scope.itemsPerPage = 10;
 $scope.currentPage = 1;
 
@@ -228,7 +228,7 @@ $scope.currentPage = 1;
        if(res.data) {
            $scope.instances=res.data;
            //$scope.filteredInstances = $filter('searchAll')($scope.importInstances,'');
-           $scope.totalInstances = $scope.instances.length;
+           $scope.totalPatients = $scope.instances.length;
           $scope.beginItem = (($scope.currentPage - 1) * $scope.itemsPerPage);
           $scope.endItem = $scope.beginItem + $scope.itemsPerPage;
            //$scope.filteredInstances = $filter('searchAll')($scope.importInstances,'').slice(beginItem,endItem);
@@ -268,15 +268,15 @@ $scope.currentPage = 1;
  //             var endItem = beginItem + $scope.itemsPerPage;
  //             $scope.filteredInstances = $filter('searchAll')($scope.importInstances,searchText).slice(beginItem,endItem);
  //            if (searchText =='') {
- //               $scope.totalInstances = $scope.importInstances.length;
+ //               $scope.totalPatients = $scope.importInstances.length;
  //            }
  //            else {
- //               $scope.totalInstances = $scope.filteredInstances.length;
+ //               $scope.totalPatients = $scope.filteredInstances.length;
  //            }
  //        }
  // });
   $scope.pageCount = function () {
-    return Math.ceil($scope.totalInstances / $scope.itemsPerPage);
+    return Math.ceil($scope.totalPatients / $scope.itemsPerPage);
   };
 
 $scope.setPage = function (pageNo) {

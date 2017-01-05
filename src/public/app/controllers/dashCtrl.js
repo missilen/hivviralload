@@ -6,37 +6,35 @@ $scope.$parent.activeMenu='dashboard';
 $scope.sortReverse=false;
 $scope.sortType = "dateCreated";
 // set up pagination
-$scope.totalInstances = 0;
+$scope.totalPatients = 0;
 $scope.itemsPerPage = 15;
 $scope.currentPage = 1;
+$scope.diagnoses = [];
+$scope.allergies =[];
+
+  $http.get('/api/getPatientList').then(function(res){
+      if (res.data){
+          $scope.patientList = [];
+          var uniquePatients = _.uniq(res.data, function(x){
+              return x.patientDetail.display;
+          });
+
+          uniquePatients.forEach(function(patient) {
+                  $scope.patientList.push({
+                      patientId: patient.patientDetail.display.split('-')[0].trim(),
+                      name: patient.patientDetail.display.split('-')[1].trim(),
+                      birthDate: patient.patientDetail.person.birthdate,
+                      uuid: patient.patientDetail.uuid,
+                      identifiers: patient.patientDetail.identifiers,
+                      links: patient.patientDetail.links
+                  })
+              })
 
 
-  ngPatient.getPatientList().then(function(res){
-        if (res.results){
-            $scope.patientList = [];
-            var uniquePatients = _.uniq(res.results, function(x){
-                return x.patient.display;
-            });
-
-            uniquePatients.forEach(function(patient) {
-                ngPatient.getPatientDetail(patient.patient.uuid).then(function(patientResult){
-
-                    $scope.patientList.push({
-                        patientId: patientResult.display.split('-')[0].trim(),
-                        name: patientResult.display.split('-')[1].trim(),
-                        birthDate: patientResult.person.birthdate,
-                        uuid: patientResult.uuid,
-                        identifiers: patientResult.identifiers,
-                        links: patientResult.links
-                    })
-                })
-
-            })
-            //          console.log($scope.patientList);
-            $scope.totalPatients = $scope.patientList.length;
-        }
-    })
-
+          //          console.log($scope.patientList);
+          $scope.totalPatients = $scope.patientList.length;
+      }
+  })
 
 $scope.sortInstances = function(sortType) {
   if($scope.sortReverse)
@@ -88,86 +86,126 @@ function compareDesc(a,b) {
   }
 }
 
-function getCompletionStatus() {    
-  for(var i = 0, l = $scope.instances.length; i < l; ++i){
-      oneInstance = $scope.instances[i];
-      var categoryCount = 0;
-      var completedCount = 0;
-      for (category in $scope.instances[i].categories) {
-       if ($scope.instances[i].categories.hasOwnProperty(category) && ($scope.instances[i].categories[category].userAssigned != '')) {
-            categoryCount++;
-            }
-       
-        if ($scope.instances[i].categories[category].statusCompleted) { 
-                 completedCount ++;      
-            }
-      }
-        $scope.instances[i].eventInstanceStatus = Math.round((completedCount / categoryCount*100));
+  $scope.showPatientInfo = function(patientInstance) {
+      $scope.patientInstance = patientInstance;
+      var modalInstance = $modal.open({
+          scope:$scope,
+          templateUrl: '/partials/patientInfoModal',
+          controller: patientInfoModalCtrl,
+          windowClass: 'center-modal',
+          size: 'lg',
+          resolve: {
+              patientInstance: function () {
+                  return $scope.patientInstance;
+              }
+          }
+      });
+  };
 
-        $log.debug($scope.instances[i].eventInstanceStatus);
-        $log.debug('category count ' + categoryCount);
-        $log.debug('completed count = ' + completedCount);
-  }
-};
+  var patientInfoModalCtrl = function($scope, $modalInstance) {
+      //console.log($scope.patientInstance);
+      $scope.diagnoses = [];
+      ngPatient.getEncounters($scope.patientInstance.uuid).then(function (encounterData) {
+        //  console.log(encounterData);
+          encounterData.forEach(function (encounter) {
+              encounter.obs.forEach(function(ob){
+                  if (ob.concept.uuid === '159947AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') {
+                      ob.groupMembers.forEach(function(member) {
+                          if (member.concept.uuid === "1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"){
+                              var oneDiagnose = {
+                                  'encounterDatetime': encounter.encounterDatetime,
+                                  'location': encounter.location,
+                                  'ob': ob,
+                                  'display' : member.display.split('PROBLEM LIST:')[1],
+                                  'links': ob.links
+                              }
+                              $scope.diagnoses.push(oneDiagnose);
+                          }
+                      })
+
+                  }
+              })
+          })
+      //    console.log($scope.diagnoses);
+      })
+      ngPatient.getAllergies($scope.patientInstance.uuid).then(function (allergyData) {
+        //  console.log(allergyData);
+          $scope.allergies = [];
+          if (!allergyData.error) {
+              $scope.allergies = allergyData.results;
+          }
+          //    console.log($scope.diagnoses);
+      })
+      $scope.ok = function () {
+
+          $modalInstance.close();
+
+      };
+
+      $scope.cancel = function () {
+
+          $modalInstance.dismiss();
+
+      };
+  };
+
+// $scope.showInfo = function(instance) {
+//         // function to activate "moreinfomodal"
+//     $scope.eventdoc = instance;
+//         var modalInstance = $modal.open({
+//             scope:$scope,
+//             templateUrl: '/partials/moreInfoModal',
+//             controller: infoModalInstanceCtrl,
+//             windowClass: 'center-modal',
+//             size: 'md',
+//             resolve: {
+//                 instance: function () {
+//                     return $scope.eventdoc;
+//                 }
+//             }
+//
+//         });
+// };
 
 
-$scope.showInfo = function(instance) {
-        // function to activate "moreinfomodal"
-    $scope.eventdoc = instance;
-        var modalInstance = $modal.open({
-            scope:$scope,
-            templateUrl: '/partials/moreInfoModal',
-            controller: infoModalInstanceCtrl,
-            windowClass: 'center-modal',
-            size: 'md',
-            resolve: {
-                instance: function () {
-                    return $scope.eventdoc;
-                }
-            }
-
-        });
-    };
-
-
-var infoModalInstanceCtrl = function ($scope, $modalInstance) {
-// controller for More Information modal popup
-        $scope.instance = {};
-        $log.debug('instance in modal ',$scope.instance);
-        var categoryCount = 0;
-        var completedCount = 0;
-
-
-        for (var i = 0 ; i < $scope.eventdoc.categories.length; i++)
-
-        {
-            var oneCategory =  $scope.eventdoc.categories[i];
-            var topicCount=oneCategory.topics.length;
-            var subTopicCount = 0;
-            for (topic in oneCategory.topics) {
-                $log.debug('topic object',topic);
-                subTopicCount=oneCategory.topics[topic].subTopics.length+subTopicCount;
-            }
-
-            $scope.instance[oneCategory.name]={topicCount:topicCount,subTopicCount:subTopicCount,name:oneCategory.name,userAssigned:oneCategory.userAssigned.displayName,statusCompleted:oneCategory.statusCompleted,dateCompleted:oneCategory.dateCompleted};
-        }
-
-        $log.debug('eventdoc ',$scope.eventdoc);
-        $scope.ok = function () {
-
-            $modalInstance.close();
-
-        };
-
-        $scope.cancel = function () {
-
-            $modalInstance.dismiss();
-
-        };
-
-        $log.debug('instance object:',$scope.instance);
-
-    };
+// var infoModalInstanceCtrl = function ($scope, $modalInstance) {
+// // controller for More Information modal popup
+//         $scope.instance = {};
+//         $log.debug('instance in modal ',$scope.instance);
+//         var categoryCount = 0;
+//         var completedCount = 0;
+//
+//
+//         for (var i = 0 ; i < $scope.eventdoc.categories.length; i++)
+//
+//         {
+//             var oneCategory =  $scope.eventdoc.categories[i];
+//             var topicCount=oneCategory.topics.length;
+//             var subTopicCount = 0;
+//             for (topic in oneCategory.topics) {
+//                 $log.debug('topic object',topic);
+//                 subTopicCount=oneCategory.topics[topic].subTopics.length+subTopicCount;
+//             }
+//
+//             $scope.instance[oneCategory.name]={topicCount:topicCount,subTopicCount:subTopicCount,name:oneCategory.name,userAssigned:oneCategory.userAssigned.displayName,statusCompleted:oneCategory.statusCompleted,dateCompleted:oneCategory.dateCompleted};
+//         }
+//
+//         $log.debug('eventdoc ',$scope.eventdoc);
+//         $scope.ok = function () {
+//
+//             $modalInstance.close();
+//
+//         };
+//
+//         $scope.cancel = function () {
+//
+//             $modalInstance.dismiss();
+//
+//         };
+//
+//         $log.debug('instance object:',$scope.instance);
+//
+//     };
 
 
 
@@ -193,16 +231,16 @@ function getNodeCount(document) {
 //               $scope.endItem=endItem;
 //              $scope.filteredInstances = $filter('searchAll')($scope.instances,searchText).slice(beginItem,endItem);
 //             if (searchText =='') {
-//                $scope.totalInstances = $scope.instances.length;
+//                $scope.totalPatients = $scope.instances.length;
 //             }
 //             else {
-//                $scope.totalInstances = $scope.filteredInstances.length;
+//                $scope.totalPatients = $scope.filteredInstances.length;
 //             }
 //         }
 //  });
 
 $scope.pageCount = function () {
-    return Math.ceil($scope.totalInstances / $scope.itemsPerPage);
+    return Math.ceil($scope.totalPatients / $scope.itemsPerPage);
   };
 
 $scope.setPage = function (pageNo) {

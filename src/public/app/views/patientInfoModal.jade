@@ -1,0 +1,141 @@
+div(ng-controller='patientInfoModalCtrl')
+  .modal-header
+  .modal-body(style='height:105vh;')
+    .row(style='background-color:#ffffff; margin:0px;')
+      .col-lg-12
+        .create-new-event-cont
+          h2.h2-create-new {{patientInstance.patientId}}-{{patientInstance.name}}
+        .save-draft-cont(style='position:absolute; float:left; margin-left:-45px;')
+            button.btn.btn-default.btn-circle.glyphicon.glyphicon-remove(type="button" ng-click="cancel()")
+        .hor-line-br  
+    // Content
+    .row(style='margin:0px;')
+      .col-lg-12(style='padding:30px;')
+        .panel.panel-default
+          .panel-body
+            col-lg-12.col-md-12.col-sm-12
+              .tab-container
+                tabset
+                  tab
+                    tab-heading
+                      span(style='font-size:14pt; font-weight: bold') Patient Summary
+                    .row
+                      .col-lg-12.col-md-12.col-sm-12(style='padding-left:35px; padding-right:35px; padding-bottom:15px;')
+                        br
+                        .col-lg-6.col-md-6.col-sm-6.zero-padding-margin
+                          div(id='flowsheets')
+                              col-lg-12.col-md-12.col-sm-12
+                                  .panel.panel-default
+                                      .panel-heading
+                                          h3.panel-title Flowsheets
+                                      .panel-body
+                                          table.table.table-hover
+                                              tbody
+                                                  tr(ng-repeat="flowsheet in flowsheets | orderBy:'-encounterDatetime'")
+                                                      td(ng-class-odd="'tableStripe'")
+                                                          a(ui-sref='#') {{flowsheet.display}}
+                          div(id='currentMedication')
+                              col-lg-12.col-md-12.col-sm-12
+                                  .panel.panel-default
+                                      .panel-heading
+                                          h3.panel-title Current Medication
+                                      .panel-body
+                                          table.table.table-hover
+                                              tbody
+                                                  tr(ng-repeat="medication in medications | orderBy:'-encounterDatetime'")
+                                                      td(ng-class-odd="'tableStripe'")
+                                                          a(ui-sref='#') {{medication.display}}
+                          div(id='diagnoses')
+                              col-lg-12.col-md-12.col-sm-12
+                                  .panel.panel-default
+                                      .panel-heading
+                                          h3.panel-title Diagnoses
+                                      .panel-body
+                                          table.table.table-hover
+                                              tbody
+                                                  tr(ng-repeat="diagnose in diagnoses | orderBy:'-encounterDatetime'")
+                                                      td(ng-class-odd="'tableStripe'")
+                                                          a(ui-sref='#') {{diagnose.display}}
+                          div(id='allergies')
+                              col-lg-12.col-md-12.col-sm-12
+                                  .panel.panel-default
+                                      .panel-heading
+                                          h3.panel-title Allergies
+                                      .panel-body
+                                          table.table.table-hover
+                                              tbody
+                                                  tr(ng-repeat="allergy in allergies" )
+                                                      td(ng-class-odd="'tableStripe'")
+                                                          a(ui-sref='#') {{allergy.display}}
+
+                        .col-lg-6.col-md-6.col-sm-6.zero-padding-margin
+                          div(id='notes')
+                              col-lg-12.col-md-12.col-sm-12
+                                  .panel.panel-default
+                                      .panel-heading
+                                          h3.panel-title Notes
+                                      .panel-body
+                                          table.table.table-hover
+                                              tbody
+                                                  tr(ng-repeat="note in notes | orderBy:'-encounterDatetime'")
+                                                      td(ng-class-odd="'tableStripe'")
+                                                          a(ui-sref='#') {{note.display}}
+                          div(id='appointments')
+                              col-lg-12.col-md-12.col-sm-12
+                                  .panel.panel-default
+                                      .panel-heading
+                                          h3.panel-title Appointment
+                                      .panel-body
+                                          table.table.table-hover
+                                              tbody
+                                                  tr(ng-repeat="appointment in appointments | orderBy:'-encounterDatetime'")
+                                                      td(ng-class-odd="'tableStripe'")
+                                                          a(ui-sref='#') {{appointment.display}}
+                          div(id='contacts')
+                              col-lg-12.col-md-12.col-sm-12
+                                  .panel.panel-default
+                                      .panel-heading
+                                          h3.panel-title Contacts
+                                      .panel-body
+                                          table.table.table-hover
+                                              tbody
+                                                  tr(ng-repeat="contact in contacts | orderBy:'-encounterDatetime'")
+                                                      td(ng-class-odd="'tableStripe'")
+                                                          a(ui-sref='#') {{contact.display}}
+                            div(id='socialHistory')
+                                col-lg-12.col-md-12.col-sm-12
+                                    .panel.panel-default
+                                        .panel-heading
+                                            h3.panel-title Social History
+                                        .panel-body
+                                            table.table.table-hover
+                                                tbody
+                                                    tr(ng-repeat="history in socialHistory | orderBy:'-encounterDatetime'")
+                                                        td(ng-class-odd="'tableStripe'")
+                                                            a(ui-sref='#') {{history.display}}
+                        div(ui-view='footer')
+                  tab
+                    tab-heading
+                      span(style='font-size:14pt; font-weight: bold') Profile Demographic
+                    .row
+                      .col-lg-12.col-md-12.col-sm-12(style='padding-left:35px; padding-right:35px; padding-bottom:15px;')
+                        br
+                        .row
+                          .col-lg-9.col-md-9.col-sm-9
+                        br
+                        hr
+                        br
+                  tab
+                    tab-heading
+                      span(style='font-size:14pt; font-weight: bold') Clinical Lab Data
+                    .row
+                      .col-lg-12.col-md-12.col-sm-12(style='padding-left:35px; padding-right:35px; padding-bottom:15px;')
+                        br
+                        .row
+                          .col-lg-9.col-md-9.col-sm-9
+                            button.btn.btn-primary(ng-click="createLabOrder(myPatient.uuid,'test')") New Lab Order
+                        br
+                        hr
+                        br
+    .clear-divs
+                  

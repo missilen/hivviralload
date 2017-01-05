@@ -10,6 +10,7 @@ var media = require('../controllers/media');
 var fs = require('fs');
 //var auth = require('./auth');
 var openmrsAuth = require('./openMRSAuth');
+var patientServices = require('../controllers/patientServices');
 var mongoose = require('mongoose'),
     User = mongoose.model('User');
 
@@ -47,13 +48,9 @@ module.exports = function(app) {
   app.post('/api/events/saveCollectedData',events.saveCollectedData);
   app.post('/api/events/saveChartData',events.saveChartData);
 
-  app.post('/api/reports/saveCustomizedReport', reports.saveCustomizedReport);
-  app.get('/api/reports/getCustomizedReport/:eventDocId', reports.getCustomizedReport);
-
-  app.get('/api/eventTypes', admin.getEventTypes);
-  app.post('/api/eventTypes', admin.updateEventTypes);
-  app.get('/api/categories', admin.getCategories);
-  app.post('/api/categories', admin.updateCategories);
+  app.get('/api/getPatientList',patientServices.getPatientList);
+  app.get('/api/getPatientEncounters/:patientUuid',patientServices.getPatientEncounters);
+  app.get('/api/getPatientAllergies/:patientUuid',patientServices.getPatientAllergies);
 
   app.get('/partials/*', function(req, res) {
     res.render('../../public/app/views/' + req.params);

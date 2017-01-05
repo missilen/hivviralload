@@ -15,6 +15,7 @@ exports.authenticateUser = function(req, res, next) {
             res.send({success:false})
         }
         else {
+            console.log(data);
             res.send({success:true, authenticateData: data})
         }
 

@@ -39,7 +39,7 @@
                                 // <td ng-class-odd="'tableStripe'"><a ng-href="#" ng-click="showPatient(patient.uuid)">View Patient</a></td>
                                 // <td ng-class-odd="'tableStripe'"><a href="#/patientDetail/{{patient.uuid}}">View Patient</a></td>
                                 td(ng-class-odd="'tableStripe'")
-                                    a(ui-sref='patientDetail({uuid:patient.uuid})') View Patient
+                                    a(ng-click="showPatientInfo(patient)") View Patient
         .row(ng-show='filpatients.length > itemsPerPage')
             .col-lg-12
                 .text-center

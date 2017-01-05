@@ -84,6 +84,71 @@ hivViralApp.config(['$routeProvider', '$locationProvider',
     //$locationProvider.html5Mode(true);
 }]);
 
+
+// hivViralApp.config(['$stateProvider', '$urlRouterProvider',
+//     function($stateProvider, $urlRouterProvider) {
+//         $urlRouterProvider.otherwise('/dashboard');
+//         $stateProvider
+//             .state('dashboard', {
+//                 url:'/',
+//                 templateUrl : '/partials/patientDashboard',
+//                controller  : 'dashCtrl',
+//             })
+//             .state('patientList',{
+//                 url : '/patientList',
+//                 templateUrl : '/partials/patientDashboard',
+//                 controller  : 'dashCtrl',
+//             })
+//             .state('tasks',{
+//                 url : '/tasks',
+//                 templateUrl  : 'app/tasks/tasks.html',
+//                 controller   : 'tasksController'
+//             })
+//             .state('reports', {
+//                 url : '/reports',
+//                 templateUrl  : 'app/reports/reports.html',
+//                 controller   : 'reportsController'
+//             })
+//             .state('patientDetail', {
+//                 url:'/patientDetail/:uuid',
+//                 views : {
+//                     '' :  {
+//                         templateUrl  : 'app/patient/patientDetail.html',
+//                         controller   : 'patientController'
+//                     },
+//                     'diagnoses@patientDetail' : {
+//                         templateUrl : 'app/patient/diagnoses.html',
+//                         controller  : 'diagnosesCtrl'
+//                     },
+//                     'appointments@patientDetail' : {
+//                         templateUrl : 'app/patient/appointments.html',
+//                         controller    : 'appointmentsCtrl'
+//                     },
+//                     'flowsheets@patientDetail' : {
+//                         templateUrl : 'app/patient/flowsheets.html',
+//                         controller    : 'flowsheetsCtrl'
+//                     },
+//                     'allergies@patientDetail' : {
+//                         templateUrl : 'app/patient/allergies.html',
+//                         controller    : 'allergiesCtrl'
+//                     },
+//                     'notes@patientDetail' : {
+//                         templateUrl : 'app/patient/notes.html',
+//                         controller    : 'notesCtrl'
+//                     },
+//                     'contacts@patientDetail' : {
+//                         templateUrl : 'app/patient/contacts.html',
+//                         controller    : 'contactsCtrl'
+//                     },
+//                     'medications@patientDetail' : {
+//                         templateUrl : 'app/patient/medications.html',
+//                         controller    : 'medicationsCtrl'
+//                     }
+//                 }
+//
+//             })
+//
+//     }]);
 angular.module('app').run(function($rootScope,$location,$cookies) {
   $rootScope.$on('$routeChangeError', function(evt,current, previous,rejection) {
     if(rejection === 'not authorized'){
