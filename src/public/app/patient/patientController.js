@@ -24,7 +24,7 @@ angular.module('app').controller('patientController',function($rootScope, $scope
 
 
 
-    $scope.createLabOrder = function(uuid,orderType){
+    $scope.showLabOrderForm = function(uuid, orderType){
         var modalInstance = $uibModal.open({
             scope : $scope,
             animation: true,

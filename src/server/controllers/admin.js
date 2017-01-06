@@ -1,4 +1,4 @@
-var mongo = require('../lib/mongoConnection');
+//var mongo = require('../lib/mongoConnection');
 var ObjectID = require('mongodb').ObjectID;
 
 exports.getEventTypes = function(req,res) {

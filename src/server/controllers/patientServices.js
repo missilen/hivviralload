@@ -107,7 +107,7 @@ exports.getPatientAllergies = function(req,res) {
 exports.getLabOrders = function(req,res) {
     // this function retrieve all lab orders
 };
-exports.createLabOrder = function(req,res){
+exports.showLabOrderForm = function(req, res){
 
 }
 

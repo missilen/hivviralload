@@ -149,65 +149,73 @@ function compareDesc(a,b) {
       };
   };
 
-// $scope.showInfo = function(instance) {
-//         // function to activate "moreinfomodal"
-//     $scope.eventdoc = instance;
-//         var modalInstance = $modal.open({
-//             scope:$scope,
-//             templateUrl: '/partials/moreInfoModal',
-//             controller: infoModalInstanceCtrl,
-//             windowClass: 'center-modal',
-//             size: 'md',
-//             resolve: {
-//                 instance: function () {
-//                     return $scope.eventdoc;
-//                 }
-//             }
-//
-//         });
-// };
+  $scope.showLabOrderForm = function (patientInstance) {
+      $scope.patientInstance = patientInstance;
+        // retrieve all events with active and archived status pending users requirements
+        var modalInstance = $modal.open({
+            templateUrl: '/partials/labOrderModal',
+            controller: labOrderModalCtrl,
+            size: 'md',
+            keyboard: true,
+            backdrop: 'static',
+            resolve : {
+                patientInstance: function () {
+                    return $scope.patientInstance;
+                }
+            }
+        });
+        modalInstance.result.then(function (newResult) {
+            // user selected one event, pass it to create event function
+            // also need to check for copy option
+            var selectedInstance = newResult.selectedInstance;
+            var copyOption = newResult.copyOption;
+            $scope.cleanDoc(selectedInstance,copyOption);
+            //$scope.createEvent('lg',selectedInstance,false,true);
+        }, function () {
+            //         $log.info('Modal dismissed at: ' + new Date());
+        });
+    };
+
+    var labOrderModalCtrl = function ($scope, $modalInstance,patientInstance) {
+        $scope.patientInstance = patientInstance;
+        //
+        // $http.get('/api/events/getEventsForImport').then(function(res){
+        //     if(res.data) {
+        //         $scope.instances=res.data;
+        //         //$scope.filteredInstances = $filter('searchAll')($scope.importInstances,'');
+        //         $scope.totalPatients = $scope.instances.length;
+        //         $scope.beginItem = (($scope.currentPage - 1) * $scope.itemsPerPage);
+        //         $scope.endItem = $scope.beginItem + $scope.itemsPerPage;
+        //         //$scope.filteredInstances = $filter('searchAll')($scope.importInstances,'').slice(beginItem,endItem);
+        //         $scope.sortInstances();
+        //     } else {
+        //         alert('no data received');
+        //     }
+        // });
 
 
-// var infoModalInstanceCtrl = function ($scope, $modalInstance) {
-// // controller for More Information modal popup
-//         $scope.instance = {};
-//         $log.debug('instance in modal ',$scope.instance);
-//         var categoryCount = 0;
-//         var completedCount = 0;
-//
-//
-//         for (var i = 0 ; i < $scope.eventdoc.categories.length; i++)
-//
-//         {
-//             var oneCategory =  $scope.eventdoc.categories[i];
-//             var topicCount=oneCategory.topics.length;
-//             var subTopicCount = 0;
-//             for (topic in oneCategory.topics) {
-//                 $log.debug('topic object',topic);
-//                 subTopicCount=oneCategory.topics[topic].subTopics.length+subTopicCount;
-//             }
-//
-//             $scope.instance[oneCategory.name]={topicCount:topicCount,subTopicCount:subTopicCount,name:oneCategory.name,userAssigned:oneCategory.userAssigned.displayName,statusCompleted:oneCategory.statusCompleted,dateCompleted:oneCategory.dateCompleted};
-//         }
-//
-//         $log.debug('eventdoc ',$scope.eventdoc);
-//         $scope.ok = function () {
-//
-//             $modalInstance.close();
-//
-//         };
-//
-//         $scope.cancel = function () {
-//
-//             $modalInstance.dismiss();
-//
-//         };
-//
-//         $log.debug('instance object:',$scope.instance);
-//
-//     };
+
+        // $scope.importInstance = function(instance) {
+        //     // need to add a popup here to ask user to select copy option
+        //     $modalInstance.close(instance);
+        //
+        // };
+
+        $scope.createLabOrder = function() {
+
+        }
+
+        $scope.ok = function () {
+            $modalInstance.close();
+
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss();
+        };
 
 
+    };
 
 function getNodeCount(document) {
         var nodeCount = 0;

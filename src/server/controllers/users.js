@@ -1,6 +1,6 @@
 var User = require('mongoose').model('User'),
   encrypt = require('../utilities/encryption');
-var mongo = require('../lib/mongoConnection');
+var mongo = require('../lib/mongoConnection_notuse');
 
 exports.getUsers = function(req, res) {
   User.find({}).exec(function(err, collection) {

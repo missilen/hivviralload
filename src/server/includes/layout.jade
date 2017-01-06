@@ -42,22 +42,22 @@ html(lang="en" ng-app="app")
 
                         li.side-nav-main-tab
                         li.taskList
-                            a.taskLinkColor(ui-sref='patientList')
+                            a.taskLinkColor(ng-href='/dashboard')
                                 i.fa.fa-list-ul(aria-hidden='true')
                                 | &nbspPatient List
                         li.taksList
-                            a(ui-sref='tasks')
+                            a(ng-href='/tasks')
                                 i.fa.fa-check-square-o(aria-hidden='true')
                                 | &nbspTasks
                         li.taskList
-                            a(ui-sref='reports')
+                            a(ng-href='/reports')
                                 i.fa.fa-file-text-o(aria-hidden='true')
                                 | &nbspReports
                             br
                         li.side-nav-settings
                             //i.fa.fa-fw.fa-cog
-                        li
-                            a(href='/#/admin' ng-show="identity.isAuthorized('levelTwo')") Admin
+                        //li
+                        //    a(href='/#/admin' ng-show="identity.isAuthorized('levelTwo')") Admin
                         li
                             a(href='' ng-click='logout()')
                                 | Logout

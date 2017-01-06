@@ -1,0 +1,37 @@
+div(ng-controller="labOrderCtrl" style="background-color:#f2f2f2;")
+.modal-header
+  .modal-body(style='height:105vh;')
+    .row(style='background-color:#ffffff; margin:0px;')
+      .col-lg-12
+      .save-draft-cont(style='position:absolute; float:left; margin-left:-45px;')
+            button.btn.btn-default.btn-circle.glyphicon.glyphicon-remove(type="button" ng-click="cancel()")
+      .create-new-event-cont
+      .h2.h2-create-new|Lab Order
+      br
+      .hor-line-br
+      br
+    .row
+        .col-lg-12
+            h4 {{patientInstance.patientId}}-{{patientInstance.name}}
+            .hor-line-br(style='margin-top:15px;')
+            br
+    .row
+        .col-lg-12
+            .well
+                form(name='labOrderForm' ng-controller='labOrderFormCtrl' ng-submit="createLabOrder(labOrderForm.$valid)" class="css-form" )
+                    .form-group
+                        label Lab Order Type:
+                            input.form-control.input-sm(type='text' ng-model='labOrderData.orderType' required='')
+                    //.form-group
+                        label Last Name:
+                        input.form-control.input-lg(type='text' ng-model='lastName')
+                    .form-group
+                        label Ship Via:
+                            select.form-control.input-sm(type='text'  placeholder = 'Shipment Vendor'  ng-options='shipper as shipper for shipper in shippers' ng-model='labOrderData.shipperId')
+                    .form-group
+                        label Lab Vendor:
+                           select.form-control.input-sm(type='text'  placeholder = 'Lab Vendor'  ng-options='labVendor as labVendor for labVendor in labVendors' ng-model='labOrderData.labId')
+                    button.btn.btn-primary.btn-lg(type='submit', style='width:100%;' ng-disabled="labOrderForm.$invalid") Create
+
+      .row
+        .col-lg-12
