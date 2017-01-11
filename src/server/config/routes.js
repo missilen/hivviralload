@@ -1,7 +1,6 @@
 //references to controllers go here
 var index = require('../controllers/index');
 var users = require('../controllers/users');
-var events = require('../controllers/events');
 
 var admin = require('../controllers/admin');
 var reports = require('../controllers/reports');
@@ -11,6 +10,8 @@ var fs = require('fs');
 //var auth = require('./auth');
 var openmrsAuth = require('./openMRSAuth');
 var patientServices = require('../controllers/patientServices');
+var orderTracking = require('../controllers/orderTracking');
+
 var mongoose = require('mongoose'),
     User = mongoose.model('User');
 
@@ -21,7 +22,6 @@ module.exports = function(app) {
   app.get('/api/users', users.getUsers);
   app.post('/api/users', users.createUser);
   app.put('/api/users', users.updateRole);
-  app.get('/api/users/analysts', users.getAnalysts);
   app.post('/api/users/remove', users.removeUser);
 
   app.post('/api/fileUpload', media.uploadFile);
@@ -29,26 +29,17 @@ module.exports = function(app) {
   app.post('/api/fileUpload/delete', media.deleteFile);
   app.post('/api/fileUpload/update', media.updateFileChecked);
 
-  app.post('/api/events', events.saveEvent);
-  app.post('/api/events/drafts',events.saveDraft);
-
-  app.get('/api/events/getAvailEventId/:partialId',events.getAvailEventInstanceId);
-  app.get('/api/events/duplicate/:eventName',events.findDuplicate);
-  app.post('/api/events/drafts/delete/:Id',events.deleteDraft);
-  app.post('/api/events/active/delete/:Id',events.deActivateInstance);
-  app.get('/api/events/analyst/:analystId',events.getEventsByAnalyst);
-  app.post('/api/events/saveEventCategory',events.saveEventCategory);
-  app.get('/api/events/getEventsForImport',events.getEventsForImport);
-  app.get('/api/events/findDuplicateId/:eventId',events.findDuplicateId);
-  app.get('/api/getNextAutoId/',events.getNextAutoId);
-  app.get('/api/events/data/:id',events.getDataById);
- 
-  app.post('/api/events/saveCollectedData',events.saveCollectedData);
-  app.post('/api/events/saveChartData',events.saveChartData);
-
+app.get('/api/getShipmentVendors', orderTracking.getShipmentVendors);
+app.get('/api/getLabVendors', orderTracking.getLabVendors);
   app.get('/api/getPatientList',patientServices.getPatientList);
   app.get('/api/getPatientEncounters/:patientUuid',patientServices.getPatientEncounters);
   app.get('/api/getPatientAllergies/:patientUuid',patientServices.getPatientAllergies);
+  app.get('/api/getPatientOrders/:patientUuid',patientServices.getPatientOrders);
+  app.get('/api/getPatientDrugs/:patientUuid',patientServices.getPatientDrugs);
+  app.get('/api/getPatientAppointments/:patientUuid',patientServices.getPatientAppointments);
+  app.get('/api/getOpenmrsOrderDetail/:orderUUID',patientServices.getOrderDetail);
+  app.get('/api/getOrderTrackingDetail/:orderUUID',orderTracking.getOrderTrackingDetail);
+  app.post('/api/creatLabOrder', orderTracking.createLabOrder);
 
   app.get('/partials/*', function(req, res) {
     res.render('../../public/app/views/' + req.params);

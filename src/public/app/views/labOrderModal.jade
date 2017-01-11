@@ -1,4 +1,4 @@
-div(ng-controller="labOrderCtrl" style="background-color:#f2f2f2;")
+div(ng-controller="labOrderModalCtrl" style="background-color:#f2f2f2;")
 .modal-header
   .modal-body(style='height:105vh;')
     .row(style='background-color:#ffffff; margin:0px;')
@@ -13,24 +13,21 @@ div(ng-controller="labOrderCtrl" style="background-color:#f2f2f2;")
     .row
         .col-lg-12
             h4 {{patientInstance.patientId}}-{{patientInstance.name}}
-            .hor-line-br(style='margin-top:15px;')
+            //.hor-line-br(style='margin-top:15px;')
             br
     .row
         .col-lg-12
             .well
-                form(name='labOrderForm' ng-controller='labOrderFormCtrl' ng-submit="createLabOrder(labOrderForm.$valid)" class="css-form" )
-                    .form-group
-                        label Lab Order Type:
-                            input.form-control.input-sm(type='text' ng-model='labOrderData.orderType' required='')
-                    //.form-group
-                        label Last Name:
-                        input.form-control.input-lg(type='text' ng-model='lastName')
+                form(name='labOrderForm' ng-submit="createLabOrder(labOrderForm.$valid)" class="css-form" )
                     .form-group
                         label Ship Via:
-                            select.form-control.input-sm(type='text'  placeholder = 'Shipment Vendor'  ng-options='shipper as shipper for shipper in shippers' ng-model='labOrderData.shipperId')
+                        select.form-control.input-sm(type='text'  placeholder = 'Shipment Vendor'  ng-options='shipper.shipper_id as shipper.shipper_name for shipper in shipmentVendors' ng-model='labOrderFormData.shipperId')
                     .form-group
                         label Lab Vendor:
-                           select.form-control.input-sm(type='text'  placeholder = 'Lab Vendor'  ng-options='labVendor as labVendor for labVendor in labVendors' ng-model='labOrderData.labId')
+                        select.form-control.input-sm(type='text'  placeholder = 'Lab Vendor'  ng-options='labVendor.lab_id as labVendor.lab_name for labVendor in labVendors' ng-model='labOrderFormData.labId')
+                    .form-group
+                        label Comment:
+                        textarea.form-control.input-sm(type="text" placeholder='Comment or special instructions' ng-model='labOrderFormData.comment')
                     button.btn.btn-primary.btn-lg(type='submit', style='width:100%;' ng-disabled="labOrderForm.$invalid") Create
 
       .row

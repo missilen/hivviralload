@@ -1,0 +1,53 @@
+div(ng-controller="labOrderDetailModalCtrl" style="background-color:#f2f2f2;")
+.modal-header
+  .modal-body(style='height:105vh;')
+    .row(style='background-color:#ffffff; margin:0px;')
+      .col-lg-12
+      .save-draft-cont(style='position:absolute; float:left; margin-left:-45px;')
+            button.btn.btn-default.btn-circle.glyphicon.glyphicon-remove(type="button" ng-click="cancel()")
+      .create-new-event-cont
+      .h2.h2-create-new|Lab Order Detail
+      br
+      .hor-line-br
+      br
+    .row
+        .col-lg-12
+            h4 {{order.patient.display}}
+            //.hor-line-br(style='margin-top:15px;')
+            br
+    .row
+        .col-lg-4.col-md-4.col-lg-4
+            .panel.panel-default
+                .panel-heading(style="text-align:left; font-size:18px;")
+                    | Specimen Info
+        .col-lg-4.col-md-4.col-lg-4
+            .panel.panel-default
+                .panel-heading(style="text-align:left; font-size:18px;")
+                    | Shipment Info
+        .col-lg-4.col-md-4.col-lg-4
+            .panel.panel-default
+                .panel-heading(style="text-align:left; font-size:18px;")
+                    | Lab Info
+      .row
+        .col-lg-4
+            .panel.panel-default
+                .panel-heading(style="text-align:left; font-size:18px;")
+                    i.fa.fa-flask(aria-hidden='true')
+                    |  Lab Results
+
+
+
+        .col-lg-8
+            .panel.panel-default
+                .panel-heading(style="text-align:left; font-size:18px;")
+                    | Lab Comments
+      .row
+          .col-lg-12
+              .panel.panel-default
+                  .panel-heading(style="text-align:left; font-size:18px;")
+                      | Status Summary
+                  .panel-body
+                      | lab ordered
+                      br
+                      |{{order.detail.lab_ordered_date | date: MM/DD/YYYY}}
+

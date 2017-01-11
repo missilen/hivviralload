@@ -1,6 +1,6 @@
-hivViralApp.controller('dashCtrl', ['$scope', '$rootScope','$modal','$routeParams','ngEvents','$http','ngIdentity','$log','$filter','$window','$route','ngPatient', function($scope,$rootScope, $modal,$routeParams,ngEvents,$http,ngIdentity,$log,$filter,$window,$route,ngPatient) {
+hivViralApp.controller('dashCtrl', ['$scope', '$rootScope','$modal','$routeParams','ngEvents','$http','ngIdentity','$log','$filter','$window','$route','ngPatient','$cookies','ngNotifier','$timeout', function($scope,$rootScope, $modal,$routeParams,ngEvents,$http,ngIdentity,$log,$filter,$window,$route,ngPatient,$cookies,ngNotifier,$timeout) {
 $("body").css("background-color", "#f7f7f7;");
-$scope.identity = ngIdentity
+$scope.identity = ngIdentity;
 $scope.$parent.activeMenu='dashboard';
 // set default sort column and direction;
 $scope.sortReverse=false;
@@ -11,6 +11,10 @@ $scope.itemsPerPage = 15;
 $scope.currentPage = 1;
 $scope.diagnoses = [];
 $scope.allergies =[];
+$scope.orders = [];
+$scope.appointments =[];
+$scope.medications = [];
+
 
   $http.get('/api/getPatientList').then(function(res){
       if (res.data){
@@ -26,9 +30,10 @@ $scope.allergies =[];
                       birthDate: patient.patientDetail.person.birthdate,
                       uuid: patient.patientDetail.uuid,
                       identifiers: patient.patientDetail.identifiers,
-                      links: patient.patientDetail.links
+                      links: patient.patientDetail.links,
+                      visit : patient.visit
                   })
-              })
+              });
 
 
           //          console.log($scope.patientList);
@@ -105,6 +110,8 @@ function compareDesc(a,b) {
   var patientInfoModalCtrl = function($scope, $modalInstance) {
       //console.log($scope.patientInstance);
       $scope.diagnoses = [];
+      var currentUser = $cookies.getObject('globals').currentUser;
+      $scope.patientInstance.providerId =   getProviderId(currentUser);
       ngPatient.getEncounters($scope.patientInstance.uuid).then(function (encounterData) {
         //  console.log(encounterData);
           encounterData.forEach(function (encounter) {
@@ -127,7 +134,7 @@ function compareDesc(a,b) {
               })
           })
       //    console.log($scope.diagnoses);
-      })
+      });
       ngPatient.getAllergies($scope.patientInstance.uuid).then(function (allergyData) {
         //  console.log(allergyData);
           $scope.allergies = [];
@@ -135,7 +142,26 @@ function compareDesc(a,b) {
               $scope.allergies = allergyData.results;
           }
           //    console.log($scope.diagnoses);
-      })
+      });
+
+      ngPatient.getAppointments($scope.patientInstance.uuid).then(function(appointmentData){
+          $scope.appointments = appointmentData.results;
+          console.log($scope.appointments);
+      });
+
+      ngPatient.getDrugs($scope.patientInstance.uuid).then(function(drugData){
+          $scope.medications = drugData.results;
+          console.log($scope.medications);
+      });
+      ngPatient.getOrders($scope.patientInstance.uuid).then(function (orderData) {
+          //  console.log(allergyData);
+          $scope.orders = [];
+          if (!orderData.error) {
+              $scope.orders = orderData.results;
+              console.log('orders ', $scope.orders );
+          }
+
+      });
       $scope.ok = function () {
 
           $modalInstance.close();
@@ -149,9 +175,47 @@ function compareDesc(a,b) {
       };
   };
 
+  $scope.viewOrderDetail = function(orderUUID) {
+      $scope.orderUUID = orderUUID;
+      var modalInstance = $modal.open({
+          templateUrl: '/partials/labOrderDetailModal',
+          controller: labOrderDetailModalCtrl,
+          size: 'lg',
+          keyboard: true,
+          backdrop: 'static',
+          resolve : {
+              orderUUID: function () {
+                  return $scope.orderUUID;
+              }
+          }
+      })
+    };
+
+  var labOrderDetailModalCtrl = function($scope,$modalInstance,orderUUID){
+      $scope.order = {
+          openmrs : null,
+          detail  : null
+      }
+       $http.get('/api/getOpenmrsOrderDetail/'+orderUUID).then(function(result){
+           $scope.order.openmrs = result.data;
+       });
+      $http.get('/api/getOrderTrackingDetail/'+orderUUID).then(function(result){
+          $scope.order.detail = result.data[0];
+
+      });
+
+      $scope.ok = function () {
+          $modalInstance.close();
+
+      };
+
+      $scope.cancel = function () {
+          $modalInstance.dismiss();
+      };
+  };
+
   $scope.showLabOrderForm = function (patientInstance) {
       $scope.patientInstance = patientInstance;
-        // retrieve all events with active and archived status pending users requirements
         var modalInstance = $modal.open({
             templateUrl: '/partials/labOrderModal',
             controller: labOrderModalCtrl,
@@ -165,43 +229,74 @@ function compareDesc(a,b) {
             }
         });
         modalInstance.result.then(function (newResult) {
-            // user selected one event, pass it to create event function
-            // also need to check for copy option
-            var selectedInstance = newResult.selectedInstance;
-            var copyOption = newResult.copyOption;
-            $scope.cleanDoc(selectedInstance,copyOption);
-            //$scope.createEvent('lg',selectedInstance,false,true);
+            console.log('order number returned ',newResult);
+            // trying to refresh to orders here
+            ngPatient.getOrders($scope.patientInstance.uuid).then(function (orderData) {
+                //  console.log(allergyData);
+                if (!orderData.error) {
+                    $scope.$parent.orders = orderData.results;
+                    console.log('order refresh ', $scope.$parent.orders);
+
+                }
+
+            });
+            // $timeout(function() {
+            //     // anything you want can go here and will safely be run on the next digest.
+            //     $scope.$apply();
+            // })
+
+
         }, function () {
-            //         $log.info('Modal dismissed at: ' + new Date());
+            console.log('Modal dismissed at: ' + new Date());
         });
     };
 
     var labOrderModalCtrl = function ($scope, $modalInstance,patientInstance) {
         $scope.patientInstance = patientInstance;
-        //
-        // $http.get('/api/events/getEventsForImport').then(function(res){
-        //     if(res.data) {
-        //         $scope.instances=res.data;
-        //         //$scope.filteredInstances = $filter('searchAll')($scope.importInstances,'');
-        //         $scope.totalPatients = $scope.instances.length;
-        //         $scope.beginItem = (($scope.currentPage - 1) * $scope.itemsPerPage);
-        //         $scope.endItem = $scope.beginItem + $scope.itemsPerPage;
-        //         //$scope.filteredInstances = $filter('searchAll')($scope.importInstances,'').slice(beginItem,endItem);
-        //         $scope.sortInstances();
-        //     } else {
-        //         alert('no data received');
-        //     }
-        // });
+        $scope.shipmentVendors =[];
+        $scope.labVendors = [];
+        $scope.labOrderFormData = {
+            shipperId : 1,
+            labId   : 1,
+            comment : null
+        };
+        $http.get('/api/getShipmentVendors').then( function(res){
+           if (res.data){
+               console.log(res.data);
+              $scope.shipmentVendors = res.data;
+            }
+        }
+        );
+        $http.get('/api/getLabVendors').then( function(res) {
+                if (res.data) {
+                    console.log(res.data);
+                    $scope.labVendors = res.data;
+                }
+            }
+        );
 
-
-
-        // $scope.importInstance = function(instance) {
-        //     // need to add a popup here to ask user to select copy option
-        //     $modalInstance.close(instance);
-        //
-        // };
 
         $scope.createLabOrder = function() {
+          //  console.log($scope.patientInstance);
+            var labOrderData = {
+                patient     :  $scope.patientInstance.uuid,
+                shipperId : $scope.labOrderFormData.shipperId,
+                labId  : $scope.labOrderFormData.labId,
+                encounter   : $scope.patientInstance.visit.encounters[0].uuid,
+                provider    : $scope.patientInstance.providerId,
+                comment  : $scope.labOrderFormData.comment,
+                instructions    : '',
+                specimensource : 'blood'
+            }
+          //  console.log('create lab order called ', labOrderData);
+            $http.post('/api/creatLabOrder',labOrderData).then(function(createOrderResult){
+
+                if (createOrderResult.data.order_id) {
+                    // confirm order has been created with an order number
+                    ngNotifier.notify("Lab Order request successful.");
+                    $modalInstance.close(createOrderResult.data.order_id);
+                }
+            });
 
         }
 
@@ -225,6 +320,17 @@ function getNodeCount(document) {
         return nodeCount;
     };
 
+function getProviderId(currentUser) {
+
+    // var providerId = null;
+    // console.log('current user ',currentUser);
+    // currentUser.roles.forEach(function(role){
+    //     if (role.display =='Provider'){
+    //         providerId = role.uuid;
+    //     }
+    // })
+    return 1;  // dummy for now
+}
 
 // // pagination functions
 // $scope.$watch('$parent.searchText', function (searchText) {

@@ -56,9 +56,7 @@ hivViralApp.factory('ngPatient', function($http, $location, $browser,$rootScope,
             return promise;
         }
         ,getAppointments : function(patientUUID){
-            var service = 'ws/rest/v1/caresetting';
-            var urlResource = rootUrl+service;
-            var promise = $http.get(urlResource).then(function(response){
+            var promise = $http.get('/api/getPatientAppointments/'+patientUUID).then(function(response){
                 return response.data.results;
             })
             // Return the promise to the controller
@@ -86,6 +84,22 @@ hivViralApp.factory('ngPatient', function($http, $location, $browser,$rootScope,
         },
         getAllergies : function(patientUUID) {
             var promise = $http.get('/api/getPatientAllergies/'+patientUUID).then(function (response) {
+                //       console.log(response.data);
+                return response.data;
+            });
+            // Return the promise to the controller
+            return promise;
+        },
+        getDrugs : function(patientUUID) {
+            var promise = $http.get('/api/getPatientDrugs/'+patientUUID).then(function (response) {
+                //       console.log(response.data);
+                return response.data;
+            });
+            // Return the promise to the controller
+            return promise;
+        },
+        getOrders : function(patientUUID) {
+            var promise = $http.get('/api/getPatientOrders/'+patientUUID).then(function (response) {
                 //       console.log(response.data);
                 return response.data;
             });

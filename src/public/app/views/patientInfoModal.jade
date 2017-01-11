@@ -119,12 +119,14 @@ div(ng-controller='patientInfoModalCtrl')
                       span(style='font-size:14pt; font-weight: bold') Profile Demographic
                     .row
                       .col-lg-12.col-md-12.col-sm-12(style='padding-left:35px; padding-right:35px; padding-bottom:15px;')
-                        br
-                        .row
-                          .col-lg-9.col-md-9.col-sm-9
-                        br
-                        hr
-                        br
+                        |Patient Information
+                    br
+                    .row
+                        .col-lg-12.col-md-12.col-sm-12(style='padding-left:35px; padding-right:35px; padding-bottom:15px;')
+                            |Patient Contact
+                    br
+                    hr
+                    br
                   tab
                     tab-heading
                       span(style='font-size:14pt; font-weight: bold') Clinical Lab Data
@@ -133,9 +135,34 @@ div(ng-controller='patientInfoModalCtrl')
                         br
                         .row
                           .col-lg-9.col-md-9.col-sm-9
-                            button.btn.btn-primary(ng-click="showLabOrderForm(patientInstance)") Request Lab Order
-                        br
+                            button.btn.btn-primary(ng-click="showLabOrderForm(patientInstance)" ng-disabled = "patientInstance.providerId == null") Order New Test
                         hr
+                        .row
+                           .col-lg-12.col-md-12.col-sm-12
+                              table.table.table-hover
+                                thead
+                                    tr
+                                        td Test
+                                        td Ordered Date
+                                        td Results Date
+                                        td Results
+                                        td Review Results
+                                        td
+
+                                tbody
+                                    tr(ng-repeat="order in orders | orderBy:'-encounterDatetime'")
+                                        td(ng-class-odd="'tableStripe'")
+                                            |HIV Viral Load
+                                        td(ng-class-odd="'tableStripe'")
+                                            | {{order.dateActivated | date:'MM/dd/yyyy' }}
+                                        td(ng-class-odd="'tableStripe'")
+                                            | {{order.resultDate }}
+                                        td(ng-class-odd="'tableStripe'")
+                                            | {{order.result}}
+                                        td(ng-class-odd="'tableStripe'")
+                                            | eye icon
+                                        td(ng-class-odd="'tabbleStripe'")
+                                            a(ng-href='' ng-click = "viewOrderDetail(order.uuid)") View Details
                         br
     .clear-divs
                   
