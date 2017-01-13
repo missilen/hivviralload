@@ -1693,7 +1693,7 @@ angular.module('ui.grid')
       // add header for columns
       showHideColumns.push({
         title: i18nService.getSafeText('gridMenu.columns'),
-        order: 300
+        labOrder: 300
       });
       
       $scope.grid.options.gridMenuTitleFilter = $scope.grid.options.gridMenuTitleFilter ? $scope.grid.options.gridMenuTitleFilter : function( title ) { return title; };  
@@ -1712,7 +1712,7 @@ angular.module('ui.grid')
             },
             context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) },
             leaveOpen: true,
-            order: 301 + index * 2
+            labOrder: 301 + index * 2
           };
           service.setMenuItemTitle( menuItem, colDef, $scope.grid );
           showHideColumns.push( menuItem );
@@ -1729,7 +1729,7 @@ angular.module('ui.grid')
             },
             context: { gridCol: $scope.grid.getColumn(colDef.name || colDef.field) },
             leaveOpen: true,
-            order: 301 + index * 2 + 1
+            labOrder: 301 + index * 2 + 1
           };
           service.setMenuItemTitle( menuItem, colDef, $scope.grid );
           showHideColumns.push( menuItem );
@@ -15577,7 +15577,7 @@ module.filter('px', function() {
               shown: function() {
                 return this.grid.options.exporterMenuCsv && this.grid.options.exporterMenuAllData; 
               },
-              order: 200
+              labOrder: 200
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsCsv'),
@@ -15587,7 +15587,7 @@ module.filter('px', function() {
               shown: function() {
                 return this.grid.options.exporterMenuCsv; 
               },
-              order: 201
+              labOrder: 201
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsCsv'),
@@ -15598,7 +15598,7 @@ module.filter('px', function() {
                 return this.grid.options.exporterMenuCsv &&
                        ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 ); 
               },
-              order: 202
+              labOrder: 202
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterAllAsPdf'),
@@ -15608,7 +15608,7 @@ module.filter('px', function() {
               shown: function() {
                 return this.grid.options.exporterMenuPdf && this.grid.options.exporterMenuAllData; 
               },
-              order: 203
+              labOrder: 203
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterVisibleAsPdf'),
@@ -15618,7 +15618,7 @@ module.filter('px', function() {
               shown: function() {
                 return this.grid.options.exporterMenuPdf; 
               },
-              order: 204
+              labOrder: 204
             },
             {
               title: i18nService.getSafeText('gridMenu.exporterSelectedAsPdf'),
@@ -15629,7 +15629,7 @@ module.filter('px', function() {
                 return this.grid.options.exporterMenuPdf &&
                        ( this.grid.api.selection && this.grid.api.selection.getSelectedRows().length > 0 ); 
               },
-              order: 205
+              labOrder: 205
             }
           ]);
         },
@@ -18196,14 +18196,14 @@ module.filter('px', function() {
           grid.api.core.addToGridMenu( grid, [
             {
               title: i18nService.getSafeText('gridMenu.importerTitle'),
-              order: 150
+              labOrder: 150
             },
             {
               templateUrl: 'ui-grid/importerMenuItemContainer',
               action: function ($event) {
                 this.grid.api.importer.importAFile( grid );
               },
-              order: 151
+              labOrder: 151
             }
           ]);
         },

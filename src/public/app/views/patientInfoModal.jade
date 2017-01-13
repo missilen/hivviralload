@@ -42,7 +42,7 @@ div(ng-controller='patientInfoModalCtrl')
                                       .panel-body
                                           table.table.table-hover
                                               tbody
-                                                  tr(ng-repeat="medication in medications | orderBy:'-encounterDatetime'")
+                                                  tr(ng-repeat="medication in patientInstance.medications | orderBy:'-encounterDatetime'")
                                                       td(ng-class-odd="'tableStripe'")
                                                           a(ui-sref='#') {{medication.display}}
                           div(id='diagnoses')
@@ -53,7 +53,7 @@ div(ng-controller='patientInfoModalCtrl')
                                       .panel-body
                                           table.table.table-hover
                                               tbody
-                                                  tr(ng-repeat="diagnose in diagnoses | orderBy:'-encounterDatetime'")
+                                                  tr(ng-repeat="diagnose in patientInstance.diagnoses | orderBy:'-encounterDatetime'")
                                                       td(ng-class-odd="'tableStripe'")
                                                           a(ui-sref='#') {{diagnose.display}}
                           div(id='allergies')
@@ -64,7 +64,7 @@ div(ng-controller='patientInfoModalCtrl')
                                       .panel-body
                                           table.table.table-hover
                                               tbody
-                                                  tr(ng-repeat="allergy in allergies" )
+                                                  tr(ng-repeat="allergy in patientInstance.allergies" )
                                                       td(ng-class-odd="'tableStripe'")
                                                           a(ui-sref='#') {{allergy.display}}
 
@@ -77,7 +77,7 @@ div(ng-controller='patientInfoModalCtrl')
                                       .panel-body
                                           table.table.table-hover
                                               tbody
-                                                  tr(ng-repeat="note in notes | orderBy:'-encounterDatetime'")
+                                                  tr(ng-repeat="note in patientInstance.notes | orderBy:'-encounterDatetime'")
                                                       td(ng-class-odd="'tableStripe'")
                                                           a(ui-sref='#') {{note.display}}
                           div(id='appointments')
@@ -88,7 +88,7 @@ div(ng-controller='patientInfoModalCtrl')
                                       .panel-body
                                           table.table.table-hover
                                               tbody
-                                                  tr(ng-repeat="appointment in appointments | orderBy:'-encounterDatetime'")
+                                                  tr(ng-repeat="appointment in patientInstance.appointments | orderBy:'-encounterDatetime'")
                                                       td(ng-class-odd="'tableStripe'")
                                                           a(ui-sref='#') {{appointment.display}}
                           div(id='contacts')
@@ -150,7 +150,7 @@ div(ng-controller='patientInfoModalCtrl')
                                         td
 
                                 tbody
-                                    tr(ng-repeat="order in orders | orderBy:'-encounterDatetime'")
+                                    tr(ng-repeat="order in patientInstance.orders | orderBy:'-encounterDatetime'")
                                         td(ng-class-odd="'tableStripe'")
                                             |HIV Viral Load
                                         td(ng-class-odd="'tableStripe'")
@@ -162,7 +162,7 @@ div(ng-controller='patientInfoModalCtrl')
                                         td(ng-class-odd="'tableStripe'")
                                             | eye icon
                                         td(ng-class-odd="'tabbleStripe'")
-                                            a(ng-href='' ng-click = "viewOrderDetail(order.uuid)") View Details
+                                            a(ng-href='' ng-click = "viewOrderDetail(order)") View Details
                         br
     .clear-divs
                   

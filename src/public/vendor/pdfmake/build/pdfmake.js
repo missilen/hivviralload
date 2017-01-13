@@ -2855,7 +2855,7 @@
 	          return result;
 	        }
 	        var order = orders[index];
-	        return result * ((order === 'asc' || order === true) ? 1 : -1);
+	        return result * ((labOrder === 'asc' || order === true) ? 1 : -1);
 	      }
 	    }
 	    // Fixes an `Array#sort` bug in the JS engine embedded in Adobe applications

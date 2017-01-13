@@ -1,4 +1,4 @@
-hivViralApp.controller('dashCtrl', ['$scope', '$rootScope','$modal','$routeParams','ngEvents','$http','ngIdentity','$log','$filter','$window','$route','ngPatient','$cookies','ngNotifier','$timeout', function($scope,$rootScope, $modal,$routeParams,ngEvents,$http,ngIdentity,$log,$filter,$window,$route,ngPatient,$cookies,ngNotifier,$timeout) {
+hivViralApp.controller('tasksCtrl', ['$scope', '$rootScope','$modal','$routeParams','ngEvents','$http','ngIdentity','$log','$filter','$window','$route','ngPatient','$cookies','ngNotifier','$timeout', function($scope,$rootScope, $modal,$routeParams,ngEvents,$http,ngIdentity,$log,$filter,$window,$route,ngPatient,$cookies,ngNotifier,$timeout) {
 $("body").css("background-color", "#f7f7f7;");
 $scope.identity = ngIdentity;
 $scope.$parent.activeMenu='dashboard';

@@ -58,15 +58,13 @@ hivViralApp.config([
 hivViralApp.config(['$routeProvider', '$locationProvider',
   function($routeProvider,$locationProvider) {
     $routeProvider.
-    when('/dashboard/event/:id', {
-        templateUrl : '/partials/dashboardEvent',
-        controller  : 'dashEventCtrl',
-        reloadOnSearch : false,
-        resolve : routeRoleChecks.levelTwoOrThree
-    }).
     when('/dashboard', {
         templateUrl : '/partials/patientDashboard',
         controller  : 'dashCtrl',
+    }).
+    when('/tasks', {
+        templateUrl : '/partials/tasks',
+        controller  : 'tasksCtrl',
     }).
     when('/admin', {
         templateUrl: '/partials/admin',

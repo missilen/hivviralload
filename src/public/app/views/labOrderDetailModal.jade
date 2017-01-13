@@ -12,10 +12,16 @@ div(ng-controller="labOrderDetailModalCtrl" style="background-color:#f2f2f2;")
       br
     .row
         .col-lg-12
-            h4 {{order.patient.display}}
+            h4 {{labOrder.patient.display}}
             //.hor-line-br(style='margin-top:15px;')
             br
-    .row
+      .row
+         .col-lg-12.col-md-12.col-lg-12
+             .panel.panel-default
+                 .panel-heading(style="text-align:left; font-size:18px;background-color: yellow;")
+                      | PROVIDER/DOCTOR:  Please review and sign lab results
+                      button.btn.btn-success.sign-button(type="button" ng-click="signResult()") Sign
+      .row
         .col-lg-4.col-md-4.col-lg-4
             .panel.panel-default
                 .panel-heading(style="text-align:left; font-size:18px;")
@@ -34,6 +40,11 @@ div(ng-controller="labOrderDetailModalCtrl" style="background-color:#f2f2f2;")
                 .panel-heading(style="text-align:left; font-size:18px;")
                     i.fa.fa-flask(aria-hidden='true')
                     |  Lab Results
+                    a(ng-href='' ng-click="updateLabResult(labOrderDetail.openmrs_order_uuid)")
+                        i.fa.fa-edit(style="float:right" aria-hidden="true")
+
+                .panel-body
+                    |  {{labOrderDetail.lab_results}}
 
 
 
@@ -47,7 +58,46 @@ div(ng-controller="labOrderDetailModalCtrl" style="background-color:#f2f2f2;")
                   .panel-heading(style="text-align:left; font-size:18px;")
                       | Status Summary
                   .panel-body
-                      | lab ordered
-                      br
-                      |{{order.detail.lab_ordered_date | date: MM/DD/YYYY}}
+                      ol.wizard-progress.clearfix
+                          li(ng-class = "{'active-step' : labOrderDetail.lab_ordered_date != null}")
+                              span.step-name
+                                    | Lab Ordered
+                                    br
+                                    |{{labOrderDetail.lab_ordered_date | date : 'MM/dd/yyyy'}}
+                              span.visuallyhidden Step
+                              span.step-num 1
+                          li(ng-class ="{'active-step' : labOrderDetail.specimen_collection_date != null}")
+                              span.step-name
+                                  | Blood Drawn
+                                  br
+                                  |  {{labOrderDetail.specimen_collection_date | date : 'MM/dd/yyyy'}}
+                              span.visuallyhidden Step
+                              span.step-num 2
+                          li(ng-class ="{'active-step' : labOrderDetail.ship_to_lab_date != null}")
+                              span.step-name
+                                  | Step 3
+                              span.visuallyhidden Step
+                              span.step-num 3
+                          li(ng-class ="{'active-step' : labOrderDetail.lab_received_date != null}")
+                              span.step-name
+                                  | Step 4
+                              span.visuallyhidden Step
+                              span.step-num 4
+                          li(ng-class ="{'active-step' : labOrderDetail.lab_processed_date != null}")
+                              span.step-name
+                                  | Step 5
+                              span.visuallyhidden Step
+                              span.step-num 5
+                          li(ng-class ="{'active-step' : labOrderDetail.lab_returned_date != null}")
+                              span.step-name
+                                  | Step 6
+                              span.visuallyhidden Step
+                              span.step-num 6
+                          li(ng-class ="{'active-step' : labOrderDetail.result_observation_date != null}")
+                              span.step-name
+                                  | Step 7
+                              span.visuallyhidden Step
+                              span.step-num 7
+
+
 

@@ -8,6 +8,12 @@ body {
 
 }
 
+.sign-button {
+    float:right;
+    position:relative;
+    margin-top:-5px;
+    margin-right:20px;
+}
 .userDisplay {
     float: right;
     position: relative;

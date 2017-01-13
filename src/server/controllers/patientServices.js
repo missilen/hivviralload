@@ -29,52 +29,22 @@ exports.getCareSettings = function(req,res) {
     })
 };
 exports.getPatientList = function(req,res) {
+
+    //  this api get list of all patient with hiv viral load encounter
     var globals = JSON.parse(req.cookies.globals);
     var currentSession = req.session;
     var options_auth = { user: openmrsuser, password: openmrspassword };
     var client = new restClient(options_auth);
-    //var querystr = '?v=default&limit=100'+';jsessionId='+globals.sessionId;
-    var querystr = '?v=default&limit=100';
-    var service = 'ws/rest/v1/visit';
+    var querystr =  properties.hivCohortUUID+'/member';
+    var service = 'ws/rest/v1/cohort/';
     var urlResource = rootUrl+service+querystr;
     var patientList =[];
     var count = 0;
-    var getPatientDetail = true;
+    console.log(urlResource);
     client.get(urlResource, function(data,response){
-        //  console.log(response);
-        if (getPatientDetail) {
-            var service = 'ws/rest/v1/patient/';
-            // console.log(data.results);
-            for(var i=0; i < data.results.length; i++) {
-                (function(i) {
-                    var visitData = data.results[i];
-                    var querystr = visitData.patient.uuid+'?v=full';
-                    var urlResource = rootUrl+service+querystr;
-                    client.get(urlResource, function(detaildata){
-                        count++;
-                        patientList.push({
-                            'visit' : visitData,
-                            'patientDetail' : detaildata
-                        });
-                        if (count == data.results.length) {
-                            //    console.log(patientList);
-
-                            res.send(patientList);
-                        }
-                    });
-                })(i);
-
-                if (count == data.results.length) {
-                    //    console.log(patientList);
-
-                    res.send(patientList);
-                }
-            }
-        }
-        else {
+        if (!data.error) {
             res.send(data.results);
         }
-
     })
 };
 
@@ -96,7 +66,8 @@ exports.getPatientEncounters = function(req,res) {
     var client = new restClient(options_auth);
     var encounterType = 'visit note';
     //var querystr = '?patient='+req.params.patientUuid+'&v=full&encounterType=d7151f82-c1f3-4152-a605-2f9ea7414a79';
-    var querystr = '?patient='+req.params.patientUuid+'&v=full&encounterType='+encounterType+'&order=desc';
+    //var querystr = '?patient='+req.params.patientUuid+'&v=full&encounterType='+encounterType+'&order=desc';
+    var querystr = '?patient='+req.params.patientUuid+'&v=full&order=desc';
     var service = 'ws/rest/v1/encounter';
     var urlResource = rootUrl+service+querystr;
     //console.log(urlResource)
@@ -161,8 +132,9 @@ exports.getPatientOrders = function(req,res) {
     var querystr = "?patient="+req.params.patientUuid+"&v=full";
     var service = 'ws/rest/v1/order/';
     var urlResource = rootUrl+service+querystr;
-    //console.log(urlResource)
+    console.log('Get Order UURL ', urlResource);
     client.get(urlResource, function(data,response){
+      //  console.log(data);
         if (data.error) {
             res.send({'error': data.error.code});
         }

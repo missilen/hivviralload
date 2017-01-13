@@ -5928,7 +5928,7 @@ jQuery.extend({
 		"fontWeight": true,
 		"lineHeight": true,
 		"opacity": true,
-		"order": true,
+		"labOrder": true,
 		"orphans": true,
 		"widows": true,
 		"zIndex": true,

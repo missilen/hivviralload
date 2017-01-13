@@ -11,5 +11,6 @@ module.exports = {
     SSL_KEY:  './server/utilities/key.pem',
     SSL_BUNDLE: './server/utilities/gd_bundle-g2.crt',
     openmrsuser : 'Admin',
-    openmrspassword : 'Admin123'
+    openmrspassword : 'Admin123',
+    hivCohortUUID       : '1b1b0ffb-0d6e-4a6a-94c6-afde774a5758'
 };

@@ -104,7 +104,7 @@ exports.getOrderTrackingDetail = function(req,res) {
     var order_uuid = quote+req.params.orderUUID+quote;
     console.log(order_uuid);
     if(true){
-        db.query('select * from order_tracking where openmrs_order_uuid = '+[order_uuid],function(err,rows){
+        db.query('select * from order_tracking where openmrs_order_uuid = '+order_uuid,function(err,rows){
             if(err) {
                 res.send(err);
             }

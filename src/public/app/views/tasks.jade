@@ -4,7 +4,7 @@
         .row
             .header.col-lg-12
                 div
-                    span(style='font-size: 20pt; font-weight: bold;') Patients
+                    span(style='font-size: 20pt; font-weight: bold;') Tasks
                     button.btn.btn-primary(type='button', ng-click="createPatient('lg',null,true)", style='float: right;') Add Patient
                 hr
         // Page Content
@@ -32,7 +32,7 @@
                                 th
                                     a(href='') Status
                         tbody
-                            tr(ng-repeat='patient in filpatients =(patientList | searchAll : $parent.searchText) | limitTo: itemsPerPage : beginItem ')
+                            tr(ng-repeat='patient in filpatients =(outstandingPatientList | searchAll : $parent.searchText) | limitTo: itemsPerPage : beginItem ')
                                 td(ng-class-odd="'tableStripe'") {{patient.display.split('-')[0]}}
                                 td(ng-class-odd="'tableStripe'") {{patient.display.split('-')[1]}}
                                 td(ng-class-odd="'tableStripe'") {{patient.patient.person.birthdate | date:'MM/dd/yyyy' }}
