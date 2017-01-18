@@ -1,0 +1,59 @@
+div(ng-controller="resultEntryModalCtrl" style="background-color:#f2f2f2;")
+.modal-header
+    .modal-body(style='height:105vh;')
+        .row(style='background-color:#ffffff; margin:0px;')
+            .col-lg-12
+            .save-draft-cont(style='position:absolute; float:left; margin-left:-45px;')
+                button.btn.btn-default.btn-circle.glyphicon.glyphicon-remove(type="button" ng-click="cancel()")
+            .create-new-event-cont
+            .h2.h2-create-new|Lab Results Entry
+            br
+            .hor-line-br
+            br
+        .row
+            .col-lg-12
+                h4 {{patientInstance.patientId}}-{{patientInstance.name}}
+                //.hor-line-br(style='margin-top:15px;')
+                br
+        .row
+            .col-lg-12
+                .well
+                    form(name='labResultsForm'   ng-submit="updateLabOrder(labOrderForm.$valid)" class="css-form" )
+                        .form-group
+                            label Prepared By:
+                            select.form-control.input-sm(type='text'  placeholder = 'Prepared Person'  ng-options='preparer.id as preparer.name for preparer in staffs' ng-model='labResultsData.preparerId')
+                        .form-group
+                            label Prepared Date-Time
+                                .dropdown
+                                    a#dropdown1.dropdown-toggle(role='button', data-toggle='dropdown', data-target='#', href='')
+                                        .input-group
+                                            div.form-control(type='text')
+                                                | {{labResultsData.preparedTimestamp | date:'MMM d, yyyy h:mm a'}}
+                                            span.input-group-addon
+                                                i.glyphicon.glyphicon-calendar
+                                    ul.dropdown-menu(role='menu', aria-labelledby='dLabel')
+                                        datetimepicker(data-ng-model='labResultsData.preparedTimestamp', data-datetimepicker-config="{ dropdownSelector: '#dropdown1', minView: 'hour' }" required='')
+                        .form-group
+                            label Tested By:
+                            select.form-control.input-sm(type='text'  placeholder = 'Person performed test'  ng-options='tester.id as tester.name for tester in staffs' ng-model='labResultsData.testerId')
+                        .form-group
+                            label Processed Date-Time
+                                .dropdown
+                                    a#dropdown2.dropdown-toggle(role='button', data-toggle='dropdown', data-target='#', href='')
+                                        .input-group
+                                            div.form-control(type='text')
+                                                | {{labResultsData.processedTimestamp | date:'MMM d, yyyy h:mm a'}}
+                                            span.input-group-addon
+                                                i.glyphicon.glyphicon-calendar
+                                    ul.dropdown-menu(role='menu', aria-labelledby='dLabel')
+                                        datetimepicker(data-ng-model='labResultsData.processedTimestamp', data-datetimepicker-config="{ dropdownSelector: '#dropdown2', minView: 'hour' } " required='')
+                        .form-group
+                            label CD4 Count:
+                                | &nbsp;&nbsp;
+                                input(type='number' max = '600' min = '0' ng-model='labResultsData.results' required='' )
+                                | &nbsp&nbsp; (0 - 600)
+
+                        button.btn.btn-primary.btn-lg(type='submit', style='width:100%;' ng-disabled="labOrderForm.$invalid") Update
+
+        .row
+            .col-lg-12

@@ -152,17 +152,20 @@ div(ng-controller='patientInfoModalCtrl')
                                 tbody
                                     tr(ng-repeat="order in patientInstance.orders | orderBy:'-encounterDatetime'")
                                         td(ng-class-odd="'tableStripe'")
-                                            |HIV Viral Load
-                                        td(ng-class-odd="'tableStripe'")
-                                            | {{order.dateActivated | date:'MM/dd/yyyy' }}
-                                        td(ng-class-odd="'tableStripe'")
-                                            | {{order.resultDate }}
-                                        td(ng-class-odd="'tableStripe'")
-                                            | {{order.result}}
-                                        td(ng-class-odd="'tableStripe'")
-                                            | eye icon
+                                            |{{order.openmrs_order}}
+                                        td(ng-class-odd="'tableStripe'" style="text-align:center")
+                                            | {{order.lab_ordered_date | date:'MM/dd/yyyy' }}
+                                        td(ng-class-odd="'tableStripe'" style="text-align:center")
+                                            |{{order.lab_returned_date === null ? "N/A" : order.lab_returned_date | date:'MM/dd/yyyy'}}
+                                        td(ng-class-odd="'tableStripe'" style="text-align:center")
+                                            span(style="color:{{resultFlag(order.lab_results)}}") {{order.lab_results===null ?"Pending" : order.lab_results }}
+                                        td(ng-class-odd="'tableStripe'" style="text-align:center")
+                                            i.fa.fa-eye(style="font-size: 1.5em;" aria-hidden='true' ng-class = "{'green-eye' : order.result_observation_date != null}")
                                         td(ng-class-odd="'tabbleStripe'")
                                             a(ng-href='' ng-click = "viewOrderDetail(order)") View Details
+                                        td(ng-class-odd="'tabbleStripe'")
+                                            a(ng-href='' ng-click = "updateLabResults(order)") Results Entry
+
                         br
     .clear-divs
                   

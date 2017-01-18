@@ -6,7 +6,7 @@ var properties = require('../lib/envProperties');
 var db = require('../lib/dbConnection');
 var paths = require('../config/config')
 var restClient = require('node-rest-client').Client;
-var monent = require('moment');
+var moment = require('moment');
 
 var rootUrl = paths.openmrsPath;
 var openmrsuser =  properties.openmrsuser;
@@ -130,7 +130,7 @@ exports.getOrderTrackingDetail = function(req,res) {
 exports.createLabOrder = function(req,res) {
    console.log(req.body);
    var labOrderData = req.body;
-
+    console.log(labOrderData);
    var ordertypeUuid =  "52a447d3-a64a-11e3-9aeb-50e549534c5e";  // lab test order type uuid
    var concept = "129473AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"  // hiv test uuid
    var orderTemplate =  {
@@ -138,7 +138,7 @@ exports.createLabOrder = function(req,res) {
         "patient": labOrderData.patient,
         "concept": "129473AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",  // hiv test uuid,
         "encounter": labOrderData.encounter, // orders must have an encounter
-        "orderer"    : "927b7e20-f53d-4c3d-9377-198a1d1b76ac", // default provider uuid
+        "orderer"    : "927b7e20-f53d-4c3d-9377-198a1d1b76ac", // default provider uuid  need to be dynamic
         "careSetting": "6f0c9a92-6f24-11e3-af88-005056821db0", // outpatient caresetting uuid from the caresetting resource
         "specimenSource" : "blood",
         "commentToFulfiller": labOrderData.comment,
@@ -188,7 +188,11 @@ exports.createLabOrder = function(req,res) {
                openmrs_order_link   : data.links[1].uri,
                shipper_id           : labOrderData.shipperId,
                lab_id               : labOrderData.labId,
-               lab_ordered_date     : monent().format('YYYY-MM-DD HH:mm:ss')
+               lab_ordered_date     : moment().format('YYYY-MM-DD HH:mm:ss'),
+               specimen_id          : labOrderData.specimenId,
+               specimen_name        : labOrderData.specimenName,
+               specimen_uuid        : labOrderData.patient,
+               lab_order_created_by : labOrderData.provider
            };
         //   console.log('mysql order data ',orderTrackingData);
            db.query('insert into order_tracking set ? ',[orderTrackingData],function(err,result){
@@ -207,6 +211,58 @@ exports.createLabOrder = function(req,res) {
            })
           // res.send(data);
        }
+    })
+};
+
+
+exports.getLocalOrders = function(req,res) {
+
+    var quote = '"';
+    var specimenUuid = quote+req.params.patientUUID+quote;
+    console.log(specimenUuid);
+    db.query("select * from order_tracking where specimen_uuid = "+specimenUuid,function(err,rows){
+        if(err) {
+            res.send(err);
+        }
+        else {
+            try {
+                console.log(rows);
+                res.send(rows);
+            }
+            catch(e) {
+                res.send('order tracking records not found or problem with query');
+            }
+        }
+    })
+}
+
+exports.updateLabOrderResults = function(req,res) {
+    var labResultData = req.body.labResultData;
+    var quote = '"';
+    var openmrs_order = quote+req.body.openmrs_order+quote;
+    var openmrs_order_uuid = quote+req.body.openmrs_order_uuid+quote;
+
+    labResultData.specimen_collection_date = moment(labResultData.specimen_collection_date).format('YYYY-MM-DD HH:mm:ss');
+    labResultData.lab_processed_date = moment(labResultData.lab_processed_date).format('YYYY-MM-DD HH:mm:ss');
+    labResultData.lab_returned_date = moment().format('YYYY-MM-DD HH:mm:ss');
+    db.query("update order_tracking set ? where openmrs_order = "+openmrs_order,[labResultData],function(err,result) {
+        if(err) {
+            console.log(err);
+            res.send(err);
+
+        }
+        else {
+            try {
+                console.log('update order result ',result);
+                res.send(
+                    {    'success':'result updated',
+                    }
+                );
+            }
+            catch(e) {
+                res.send('problem with query');
+            }
+        }
     })
 }
 

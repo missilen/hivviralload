@@ -1,4 +1,4 @@
-hivViralApp.controller('dashCtrl', ['$scope', '$rootScope','$modal','$routeParams','ngEvents','$http','ngIdentity','$log','$filter','$window','$route','ngPatient','$cookies','ngNotifier','$timeout', function($scope,$rootScope, $modal,$routeParams,ngEvents,$http,ngIdentity,$log,$filter,$window,$route,ngPatient,$cookies,ngNotifier,$timeout) {
+hivViralApp.controller('dashCtrl', ['$scope', '$rootScope','$modal','$routeParams','$http','ngIdentity','$log','$filter','$window','$route','ngPatient','$cookies','ngNotifier','$timeout', function($scope,$rootScope, $modal,$routeParams,$http,ngIdentity,$log,$filter,$window,$route,ngPatient,$cookies,ngNotifier,$timeout) {
 $("body").css("background-color", "#f7f7f7;");
 $scope.identity = ngIdentity;
 $scope.$parent.activeMenu='dashboard';
@@ -19,22 +19,10 @@ $scope.medications = [];
 
 
 
+
   $http.get('/api/getPatientList').then(function(res){
       if (res.data){
           $scope.patientList = res.data;
-          // res.data.forEach(function(patient) {
-          //         $scope.patientList.push({
-          //             patientId: patient.display.split('-')[0].trim(),
-          //             name: patient.display.split('-')[1].trim(),
-          //             birthDate: patient.person.birthdate,
-          //             uuid: patient.patientDetail.uuid,
-          //             identifiers: patient.identifiers,
-          //             links: patient.links,
-          //         })
-          //     });
-
-
-          //          console.log($scope.patientList);
           $scope.totalPatients = $scope.patientList.length;
       }
   })
@@ -94,7 +82,7 @@ function compareDesc(a,b) {
       $scope.patientInstance.uuid = $scope.patientInstance.patient.uuid;
       $scope.patientInstance.patientId = $scope.patientInstance.display.split('-')[0];
       $scope.patientInstance.name = $scope.patientInstance.display.split('-')[1];
-      $scope.patientInstance.orders =[];
+   //   $scope.patientInstance.orders =[];
     //  $scope.patientInstance.labOrderDetail = null;
       var modalInstance = $modal.open({
           scope:$scope,
@@ -116,22 +104,25 @@ function compareDesc(a,b) {
 
 
       var currentUser = $cookies.getObject('globals').currentUser;
-      $scope.patientInstance.providerId =   getProviderId(currentUser);
+
       ngPatient.getOrders($scope.patientInstance.uuid).then(function (orderData) {
-          $scope.patientInstance.orders = [];
+        //  $scope.patientInstance.orders = [];
           if (!orderData.error) {
-              $scope.patientInstance.orders = orderData.results;
+              $scope.patientInstance.orders = orderData;
+              console.log(orderData);
           }
       });
       ngPatient.getEncounters($scope.patientInstance.uuid).then(function (encounterData) {
         //  console.log(encounterData);
           $scope.patientInstance.diagnoses = [];
           $scope.patientInstance.hivEncounters = [];
+
           encounterData.forEach(function (encounter) {
 
 
               if (encounter.encounterType.uuid == 'dd2fdfa5-31ea-4686-b5f3-0d078d63e87d'){
                   $scope.patientInstance.hivEncounters.push(encounter);
+                  $scope.patientInstance.providerId =   encounter.encounterProviders[0].provider.uuid;
                   console.log('one encounter ', encounter);
               }
               encounter.obs.forEach(function(ob){
@@ -202,35 +193,59 @@ function compareDesc(a,b) {
       })
     };
 
-  var labOrderDetailModalCtrl = function($scope,$modalInstance,labOrder){
-      $scope.labOrder = labOrder;
-      $http.get('/api/getOrderTrackingDetail/'+labOrder.uuid).then(function(result2){
-              if (!result2.error) {
-                   $scope.labOrderDetail = result2.data[0];
-                   // $scope.labOrderDateChecked == ($scope.labOrder.detail.lab_ordered_date != null);
-                   // $scope.specimenCollectionDateChecked == ($scope.labOrder.detail.specimen_collection_date != null);
-               }
-      });
+  // var labOrderDetailModalCtrl = function($scope,$modalInstance,labOrder){
+  //     $scope.labOrder = labOrder;
+  //     $scope.resultHigh = false;
+  //
+  //     $http.get('/api/getOrderTrackingDetail/'+labOrder.uuid).then(function(result2){
+  //             if (!result2.error) {
+  //                  $scope.labOrderDetail = result2.data[0];
+  //                  $scope.resultHigh = $scope.labOrderDetail.lab_results >= 450;
+  //                  //console.log($scope.labOrderDetail);
+  //                  // $scope.labOrderDateChecked == ($scope.labOrder.detail.lab_ordered_date != null);
+  //                  // $scope.specimenCollectionDateChecked == ($scope.labOrder.detail.specimen_collection_date != null);
+  //              }
+  //     });
+  //
+  //     $scope.updateLabResult = function(orderUUId){
+  //         console.log(' i am trying to update lab results');
+  //     }
+  //
+  //     $scope.ok = function () {
+  //         $modalInstance.close();
+  //
+  //     };
+  //
+  //     $scope.cancel = function () {
+  //         $modalInstance.dismiss();
+  //     };
+  // };
+    var labOrderDetailModalCtrl = function($scope,$modalInstance,labOrder){
+        $scope.labOrderDetail = labOrder;
+        $scope.resultHigh = false;
+        $scope.resultHigh = $scope.labOrderDetail.lab_results >= 450;
+                //console.log($scope.labOrderDetail);
+                // $scope.labOrderDateChecked == ($scope.labOrder.detail.lab_ordered_date != null);
+                // $scope.specimenCollectionDateChecked == ($scope.labOrder.detail.specimen_collection_date != null);
 
-      $scope.updateLabResult = function(orderUUId){
-          console.log(' i am trying to update lab results');
-      }
 
-      $scope.ok = function () {
-          $modalInstance.close();
 
-      };
+        $scope.ok = function () {
+            $modalInstance.close();
 
-      $scope.cancel = function () {
-          $modalInstance.dismiss();
-      };
-  };
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss();
+        };
+    };
 
   $scope.showLabOrderForm = function (patientInstance) {
       $scope.patientInstance = patientInstance;
         var modalInstance = $modal.open({
             templateUrl: '/partials/labOrderModal',
             controller: labOrderModalCtrl,
+            scope : $scope,
             size: 'md',
             keyboard: true,
             backdrop: 'static',
@@ -241,25 +256,15 @@ function compareDesc(a,b) {
             }
         });
         modalInstance.result.then(function (newResult) {
-            console.log('order number returned ',newResult);
-            // trying to refresh to orders here
             ngPatient.getOrders($scope.patientInstance.uuid).then(function (orderData) {
-                //  console.log(allergyData);
                 if (!orderData.error) {
-                    $scope.orders = orderData.results;
-                    console.log('order refresh ', $scope.$parent.orders);
-
+                    $scope.patientInstance.orders = orderData;
                 }
-
-            });
-            // $timeout(function() {
-            //     // anything you want can go here and will safely be run on the next digest.
-            //     $scope.$apply();
-            // })
+         });
 
 
         }, function () {
-            console.log('Modal dismissed at: ' + new Date());
+          //  console.log('Modal dismissed at: ' + new Date());
         });
     };
 
@@ -298,7 +303,9 @@ function compareDesc(a,b) {
                 provider    : $scope.patientInstance.providerId,
                 comment  : $scope.labOrderFormData.comment,
                 instructions    : '',
-                specimensource : 'blood'
+                specimensource : 'blood',
+                specimenId  : $scope.patientInstance.patientId.trim(),
+                specimenName : $scope.patientInstance.name.trim(),
             }
           //  console.log('create lab order called ', labOrderData);
             $http.post('/api/creatLabOrder',labOrderData).then(function(createOrderResult){
@@ -341,29 +348,8 @@ function getProviderId(currentUser) {
     //         providerId = role.uuid;
     //     }
     // })
-    return 1;  // dummy for now
+    return "927b7e20-f53d-4c3d-9377-198a1d1b76ac";  // dummy for now
 }
-
-// // pagination functions
-// $scope.$watch('$parent.searchText', function (searchText) {
-//         if (!searchText){
-//           searchText = '';
-//         }
-//           if ($scope.instances) {
-//              $scope.currentPage = 1;
-//              var beginItem = (($scope.currentPage - 1) * $scope.itemsPerPage);
-//              var endItem = beginItem + $scope.itemsPerPage;
-//              $scope.beginItem=beginItem;
-//               $scope.endItem=endItem;
-//              $scope.filteredInstances = $filter('searchAll')($scope.instances,searchText).slice(beginItem,endItem);
-//             if (searchText =='') {
-//                $scope.totalPatients = $scope.instances.length;
-//             }
-//             else {
-//                $scope.totalPatients = $scope.filteredInstances.length;
-//             }
-//         }
-//  });
 
 $scope.pageCount = function () {
     return Math.ceil($scope.totalPatients / $scope.itemsPerPage);
@@ -373,6 +359,82 @@ $scope.setPage = function (pageNo) {
     $scope.currentPage = pageNo;
   };
 
+$scope.updateLabResults = function(labOrder){
+    $scope.labOrder = labOrder;
+    var modalInstance = $modal.open({
+        templateUrl: '/partials/resultEntryModal',
+        controller: resultEntryModalCtrl,
+        scope: $scope,
+        size: 'md',
+        keyboard: true,
+        backdrop: 'static',
+        resolve : {
+            labOrder: function () {
+                return $scope.labOrder;
+            }
+        }
+    });
+    modalInstance.result.then(function () {
+        // post updated $scope.items to server
+        // get fresh $scope.items from server
+        // notify modal of the updated items
+        ngPatient.getOrders($scope.patientInstance.uuid).then(function (orderData) {
+            if (!orderData.error) {
+                $scope.patientInstance.orders = orderData;
+          //      console.log(orderData);
+            }
+        });
+    }, function () {
+
+    });
+
+
+
+};
+
+    var resultEntryModalCtrl = function ($scope, $modalInstance) {
+        //console.log($scope.labOrder);
+        //$scope.labResultsData.preparerId = $scope.labOrder.specimen_collection_by;
+        //$scope.labResultsData.specimen_collection_date = $scope.labOrder.specimen_collection_date;
+
+        $scope.updateLabOrder = function() {
+            //  console.log($scope.patientInstance);
+            var labResultData = {
+                specimen_collected_by  : $scope.labResultsData.preparerId  || 1,
+                specimen_collection_date : $scope.labResultsData.preparedTimestamp,
+                lab_processed_by  : $scope.labResultsData.testerId  || 1,
+                lab_processed_date  : $scope.labResultsData.processedTimestamp,
+                lab_results          : $scope.labResultsData.results,
+
+            };
+            var postingData = {
+                openmrs_order : $scope.labOrder.openmrs_order,
+                opemmrs_order_uuid : $scope.labOrder.openmrs_order_uuid,
+                labResultData : labResultData
+            };
+        //    console.log('update lab order called ', labResultData);
+            $http.post('/api/updateLabOrderResults',postingData).then(function(updateOrderResult){
+
+                if (updateOrderResult.data.success) {
+                    // confirm order has been created with an order number
+                    ngNotifier.notify("Lab Order Results Updated successful.");
+                    $modalInstance.close('updated');
+                }
+            });
+
+        }
+
+        $scope.ok = function () {
+            $modalInstance.close();
+
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss();
+        };
+
+
+    };
 $scope.pageChanged = function(searchText) {
     $scope.beginItem = (($scope.currentPage - 1) * $scope.itemsPerPage);
     $scope.endItem = $scope.beginItem + $scope.itemsPerPage;
@@ -398,5 +460,25 @@ $scope.deleteActive = function (activeInstance) {
          
     }
     };
+
+$scope.resultFlag = function(resultInput) {
+    var flag = 'black';
+    if (resultInput === null) {
+        flag = 'black';
+    }
+    else if (resultInput >= 450) {
+        flag = 'red';
+    }
+    else if (resultInput > 250) {
+        flag = '#E69138'
+    }
+    else if (resultInput >= 0) {
+        flag = 'green'
+    }
+    else {
+        flag = 'black'
+    }
+    return flag;
+}
 }]);
 

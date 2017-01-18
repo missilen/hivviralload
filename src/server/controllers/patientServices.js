@@ -65,9 +65,9 @@ exports.getPatientEncounters = function(req,res) {
     var options_auth = { user: openmrsuser, password: openmrspassword };
     var client = new restClient(options_auth);
     var encounterType = 'visit note';
-    //var querystr = '?patient='+req.params.patientUuid+'&v=full&encounterType=d7151f82-c1f3-4152-a605-2f9ea7414a79';
-    //var querystr = '?patient='+req.params.patientUuid+'&v=full&encounterType='+encounterType+'&order=desc';
-    var querystr = '?patient='+req.params.patientUuid+'&v=full&order=desc';
+    //var querystr = '?patient='+req.params.patientUUID+'&v=full&encounterType=d7151f82-c1f3-4152-a605-2f9ea7414a79';
+    //var querystr = '?patient='+req.params.patientUUID+'&v=full&encounterType='+encounterType+'&order=desc';
+    var querystr = '?patient='+req.params.patientUUID+'&v=full&order=desc';
     var service = 'ws/rest/v1/encounter';
     var urlResource = rootUrl+service+querystr;
     //console.log(urlResource)
@@ -85,7 +85,7 @@ exports.createPatientEncounter = function(req,res) {
 exports.getPatientVisits = function(req,res) {
     var options_auth = { user: openmrsuser, password: openmrspassword };
     var client = new restClient(options_auth);
-    var querystr = '?patient='+req.params.patientUuid;
+    var querystr = '?patient='+req.params.patientUUID;
     var service = 'ws/rest/v1/visit';
     var urlResource = rootUrl+service+querystr;
     //console.log(urlResource)
@@ -98,7 +98,7 @@ exports.getPatientVisits = function(req,res) {
 exports.createPatientVisit = function(req,res) {
     var options_auth = { user: openmrsuser, password: openmrspassword };
     var client = new restClient(options_auth);
-    var querystr = '/'+req.params.patientUuid;
+    var querystr = '/'+req.params.patientUUID;
     var service = 'ws/rest/v1/visit';
     var urlResource = rootUrl+service+querystr;
     //console.log(urlResource)
@@ -111,7 +111,7 @@ exports.createPatientVisit = function(req,res) {
 exports.getPatientAllergies = function(req,res) {
     var options_auth = { user: openmrsuser, password: openmrspassword };
     var client = new restClient(options_auth);
-    var querystr = req.params.patientUuid+'/allergy';
+    var querystr = req.params.patientUUID+'/allergy';
     var service = 'ws/rest/v1/patient/';
     var urlResource = rootUrl+service+querystr;
     //console.log(urlResource)
@@ -125,14 +125,14 @@ exports.getPatientAllergies = function(req,res) {
     })
 }
 
-exports.getPatientOrders = function(req,res) {
+exports.getPatientOrders = function(req,res) {  // this version pull order from openmrs
     // this function retrieve all lab orders
     var options_auth = { user: openmrsuser, password: openmrspassword };
     var client = new restClient(options_auth);
-    var querystr = "?patient="+req.params.patientUuid+"&v=full";
+    var querystr = "?patient="+req.params.patientUUID+"&v=full";
     var service = 'ws/rest/v1/order/';
     var urlResource = rootUrl+service+querystr;
-    console.log('Get Order UURL ', urlResource);
+    //console.log('Get Order UURL ', urlResource);
     client.get(urlResource, function(data,response){
       //  console.log(data);
         if (data.error) {
@@ -167,7 +167,7 @@ exports.getPatientDrugs = function(req,res){
     var options_auth = { user: openmrsuser, password: openmrspassword };
     var client = new restClient(options_auth);
     //var querystr = '?v=default&limit=100'+';jsessionId='+globals.sessionId;
-    var querystr = '?patient='+req.params.patientUuid+'&v=default';
+    var querystr = '?patient='+req.params.patientUUID+'&v=default';
     var service = 'ws/rest/v1/drug';
     var urlResource = rootUrl+service+querystr;
 

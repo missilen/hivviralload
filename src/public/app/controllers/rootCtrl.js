@@ -1,4 +1,4 @@
-hivViralApp.controller('rootCtrl', ['$scope', '$rootScope','$modal','$routeParams','ngEvents','ngAuth','$location','ngIdentity','$route','$log','$http', function($scope, $rootScope, $modal,$routeParams,ngEvents,ngAuth, $location, ngIdentity,$route,$log,$http) {
+hivViralApp.controller('rootCtrl', ['$scope', '$rootScope','$modal','$routeParams','ngAuth','$location','ngIdentity','$route','$log','$http', function($scope, $rootScope, $modal,$routeParams,ngAuth, $location, ngIdentity,$route,$log,$http) {
 $rootScope.continueNav = true;
 $("#wrapper").show();
 $scope.activeMenu='';

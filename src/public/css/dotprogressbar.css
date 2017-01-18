@@ -37,7 +37,7 @@
 .wizard-progress .step-num {
     font-size: 14px;
     font-weight: bold;
-    border: 3px solid #000;
+    border: 3px solid #FBE8AA;
     border-radius: 50%;
     width: 18px;
     display: inline-block;
@@ -60,5 +60,5 @@
 }
 
 .wizard-progress .active-step .step-num {
-    background-color: #ff0500;
+    background-color: #FBBD19;
 }

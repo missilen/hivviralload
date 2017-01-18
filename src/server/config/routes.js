@@ -32,14 +32,16 @@ module.exports = function(app) {
 app.get('/api/getShipmentVendors', orderTracking.getShipmentVendors);
 app.get('/api/getLabVendors', orderTracking.getLabVendors);
   app.get('/api/getPatientList',patientServices.getPatientList);
-  app.get('/api/getPatientEncounters/:patientUuid',patientServices.getPatientEncounters);
-  app.get('/api/getPatientAllergies/:patientUuid',patientServices.getPatientAllergies);
-  app.get('/api/getPatientOrders/:patientUuid',patientServices.getPatientOrders);
-  app.get('/api/getPatientDrugs/:patientUuid',patientServices.getPatientDrugs);
-  app.get('/api/getPatientAppointments/:patientUuid',patientServices.getPatientAppointments);
+  app.get('/api/getPatientEncounters/:patientUUID',patientServices.getPatientEncounters);
+  app.get('/api/getPatientAllergies/:patientUUID',patientServices.getPatientAllergies);
+  app.get('/api/getPatientOrders/:patientUUID',patientServices.getPatientOrders);
+  app.get('/api/getLocalOrders/:patientUUID',orderTracking.getLocalOrders);
+  app.get('/api/getPatientDrugs/:patientUUID',patientServices.getPatientDrugs);
+  app.get('/api/getPatientAppointments/:patientUUID',patientServices.getPatientAppointments);
   app.get('/api/getOpenmrsOrderDetail/:orderUUID',patientServices.getOrderDetail);
   app.get('/api/getOrderTrackingDetail/:orderUUID',orderTracking.getOrderTrackingDetail);
   app.post('/api/creatLabOrder', orderTracking.createLabOrder);
+  app.post('/api/updateLabOrderResults', orderTracking.updateLabOrderResults);
 
   app.get('/partials/*', function(req, res) {
     res.render('../../public/app/views/' + req.params);

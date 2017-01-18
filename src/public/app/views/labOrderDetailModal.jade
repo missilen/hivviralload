@@ -14,13 +14,14 @@ div(ng-controller="labOrderDetailModalCtrl" style="background-color:#f2f2f2;")
         .col-lg-12
             h4 {{labOrder.patient.display}}
             //.hor-line-br(style='margin-top:15px;')
-            br
+            h4 Order: {{labOrderDetail.openmrs_order}}
       .row
          .col-lg-12.col-md-12.col-lg-12
              .panel.panel-default
                  .panel-heading(style="text-align:left; font-size:18px;background-color: yellow;")
-                      | PROVIDER/DOCTOR:  Please review and sign lab results
-                      button.btn.btn-success.sign-button(type="button" ng-click="signResult()") Sign
+                        span(ng-show="labOrderDetail.result_observation_date === null") PROVIDER/DOCTOR:  Please review and sign lab results
+                        span(ng-show="labOrderDetail.result_observation_date !== null") Lab Results Reviewed by {{}} on {{labOrderDetail.result_observation_date | date : 'MM/dd/yyyy' }}
+                        button.btn.btn-success.sign-button(type="button" ng-click="signResult(labOrderDetail.openmrs_order_uuid)" ng-disabled="labOrderDetail.lab_results === null" ng-show="labOrderDetail.result_observation_date === null") Sign
       .row
         .col-lg-4.col-md-4.col-lg-4
             .panel.panel-default
@@ -42,11 +43,29 @@ div(ng-controller="labOrderDetailModalCtrl" style="background-color:#f2f2f2;")
                     |  Lab Results
                     a(ng-href='' ng-click="updateLabResult(labOrderDetail.openmrs_order_uuid)")
                         i.fa.fa-edit(style="float:right" aria-hidden="true")
-
                 .panel-body
-                    |  {{labOrderDetail.lab_results}}
-
-
+                    .well.well-lab-result
+                        .span5.offset3
+                            .div(style="color:red; margin: 0 auto;text-align:center" ng-if="resultHigh")
+                                i.fa.fa-exclamation-triangle(aria-hidden="true")
+                                br
+                                | High
+                            .div.lab-result
+                                |{{labOrderDetail.lab_results}}
+                            br
+                            .div(align="center")
+                                    | [Reference Range]
+                                    table.table-responsive
+                                        tbody
+                                            tr
+                                                td.reference-text Low
+                                                td.reference-value 0 - 249
+                                            tr
+                                                td.reference-text Normal
+                                                td.reference-value 250 - 449
+                                            tr
+                                                td.reference-text High
+                                                td.reference-value 450 - 600
 
         .col-lg-8
             .panel.panel-default
@@ -60,19 +79,15 @@ div(ng-controller="labOrderDetailModalCtrl" style="background-color:#f2f2f2;")
                   .panel-body
                       ol.wizard-progress.clearfix
                           li(ng-class = "{'active-step' : labOrderDetail.lab_ordered_date != null}")
-                              span.step-name
-                                    | Lab Ordered
-                                    br
-                                    |{{labOrderDetail.lab_ordered_date | date : 'MM/dd/yyyy'}}
+                              span.step-name Lab Ordered
                               span.visuallyhidden Step
                               span.step-num 1
+                              span.step-name {{labOrderDetail.lab_ordered_date | date : 'MM/dd/yyyy'}}
                           li(ng-class ="{'active-step' : labOrderDetail.specimen_collection_date != null}")
-                              span.step-name
-                                  | Blood Drawn
-                                  br
-                                  |  {{labOrderDetail.specimen_collection_date | date : 'MM/dd/yyyy'}}
+                              span.step-name Blood Drawn
                               span.visuallyhidden Step
                               span.step-num 2
+                              span.step-name {{labOrderDetail.specimen_collection_date | date : 'MM/dd/yyyy'}}
                           li(ng-class ="{'active-step' : labOrderDetail.ship_to_lab_date != null}")
                               span.step-name
                                   | Step 3

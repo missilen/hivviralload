@@ -1,6 +1,6 @@
 var hivViralApp = angular.module('app', [
   'ngRoute'
-  ,'ui.router'
+  // ,'ui.router'
   ,'ngResource'
   ,'ngAnimate'
   ,'ngSanitize'
@@ -22,20 +22,20 @@ var hivViralApp = angular.module('app', [
 ]);
 
 //Role checking for routes
-var routeRoleChecks = {
-  levelThree:{auth: function(ngAuth){
-            return ngAuth.authorizeCurrentUserForRoute('levelThree')
-          }},
-  levelTwo:{auth:function(ngAuth){
-    return ngAuth.authorizeCurrentUserForRoute('levelTwo')
-          }},
-  levelOne:{auth:function(ngAuth){
-    return ngAuth.authorizeCurrentUserForRoute('levelOne')
-          }},
-  levelTwoOrThree:{auth:function(ngAuth){
-    return ngAuth.authorizeCurrentUserForRoute('levelTwoOrThree')
-  }} 
-};
+// var routeRoleChecks = {
+//   levelThree:{auth: function(ngAuth){
+//             return ngAuth.authorizeCurrentUserForRoute('levelThree')
+//           }},
+//   levelTwo:{auth:function(ngAuth){
+//     return ngAuth.authorizeCurrentUserForRoute('levelTwo')
+//           }},
+//   levelOne:{auth:function(ngAuth){
+//     return ngAuth.authorizeCurrentUserForRoute('levelOne')
+//           }},
+//   levelTwoOrThree:{auth:function(ngAuth){
+//     return ngAuth.authorizeCurrentUserForRoute('levelTwoOrThree')
+//   }}
+// };
 
 
 //to prevent IE caching
@@ -66,11 +66,15 @@ hivViralApp.config(['$routeProvider', '$locationProvider',
         templateUrl : '/partials/tasks',
         controller  : 'tasksCtrl',
     }).
-    when('/admin', {
-        templateUrl: '/partials/admin',
-        controller: 'adminCtrl',
-        resolve: routeRoleChecks.levelTwo
+    when('/reports', {
+        templateUrl : '/partials/reports',
+        controller  : 'reportsCtrl',
     }).
+    // when('/admin', {
+    //     templateUrl: '/partials/admin',
+    //     controller: 'adminCtrl',
+    //     resolve: routeRoleChecks.levelTwo
+    // }).
     when('/login', {
         templateUrl : '/partials/login',
         controller  : 'loginCtrl'

@@ -6,7 +6,7 @@ angular.module('app').controller('loginCtrl',function($scope,$http,ngIdentity,ng
 	}
     $scope.login = function(username, password){
 	    ngOpenMRSAuth.authenticateUser(username,password).then(function(success) {
-         //   console.log('success ',success);
+            console.log('success ',success);
             if(success) {
                 if(success.currentUser){
                     ngIdentity.currentUser = success.currentUser;

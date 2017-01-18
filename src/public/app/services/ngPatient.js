@@ -7,6 +7,7 @@ hivViralApp.service('ngPatient', function($http, $location, $browser,$rootScope,
         //var rootUrl = 'http://localhost:8080/openmrs-standalone/';
 
         var globals = $cookies.getObject('globals');
+        console.log('globals ', globals);
     var url = globals.currentUser.links[0].uri;
     console.log('session id', globals.sessionId);
     var rootUrl = url.split('ws')[0];
@@ -99,8 +100,16 @@ hivViralApp.service('ngPatient', function($http, $location, $browser,$rootScope,
             // Return the promise to the controller
             return promise;
         },
+        // getOrders: function (patientUUID) {
+        //     var promise = $http.get('/api/getPatientOrders/' + patientUUID).then(function (response) {
+        //         //       console.log(response.data);
+        //         return response.data;
+        //     });
+        //     // Return the promise to the controller
+        //     return promise;
+        // }
         getOrders: function (patientUUID) {
-            var promise = $http.get('/api/getPatientOrders/' + patientUUID).then(function (response) {
+            var promise = $http.get('/api/getLocalOrders/' + patientUUID).then(function (response) {
                 //       console.log(response.data);
                 return response.data;
             });

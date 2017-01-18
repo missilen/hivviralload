@@ -16,8 +16,21 @@ angular.module('app').factory('ngOpenMRSAuth', function($location, $http, $base6
         $http.post('/openmrslogin', {username:username, password:password}).then(function(response) {
             console.log('login response ', response);
             if(response.data.success) {
-                delete response.data.authenticateData.user.privileges;
-                delete response.data.authenticateData.user.roles;
+                try {
+                    delete response.data.authenticateData.user.privileges;
+
+                }
+                catch (e) {
+                    // donothing here
+                    //console.log(e);
+                };
+                try {
+                    delete response.data.authenticateData.user.roles;
+                }
+                catch (e) {
+                    // donothing here
+                    //console.log(e);
+                };
                 var globals =  {
                     currentUser: response.data.authenticateData.user,
                     sessionId : response.data.authenticateData.sessionId,
