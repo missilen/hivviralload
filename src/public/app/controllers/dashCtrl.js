@@ -20,6 +20,7 @@ $scope.medications = [];
 
 
 
+
   $http.get('/api/getPatientList').then(function(res){
       if (res.data){
           $scope.patientList = res.data;
@@ -103,13 +104,13 @@ function compareDesc(a,b) {
 
 
 
-      var currentUser = $cookies.getObject('globals').currentUser;
+
 
       ngPatient.getOrders($scope.patientInstance.uuid).then(function (orderData) {
         //  $scope.patientInstance.orders = [];
           if (!orderData.error) {
               $scope.patientInstance.orders = orderData;
-              console.log(orderData);
+         //     console.log(orderData);
           }
       });
       ngPatient.getEncounters($scope.patientInstance.uuid).then(function (encounterData) {
@@ -179,17 +180,14 @@ function compareDesc(a,b) {
   };
 
   $scope.viewOrderDetail = function(labOrder) {
+      $scope.labOrderDetail = labOrder;
       var modalInstance = $modal.open({
           templateUrl: '/partials/labOrderDetailModal',
           controller: labOrderDetailModalCtrl,
+          scope : $scope,
           size: 'lg',
           keyboard: true,
           backdrop: 'static',
-          resolve : {
-              labOrder: function () {
-                  return labOrder;
-              }
-          }
       })
     };
 
@@ -220,15 +218,32 @@ function compareDesc(a,b) {
   //         $modalInstance.dismiss();
   //     };
   // };
-    var labOrderDetailModalCtrl = function($scope,$modalInstance,labOrder){
-        $scope.labOrderDetail = labOrder;
+    var labOrderDetailModalCtrl = function($scope,$modalInstance,$cookies){
         $scope.resultHigh = false;
         $scope.resultHigh = $scope.labOrderDetail.lab_results >= 450;
-                //console.log($scope.labOrderDetail);
-                // $scope.labOrderDateChecked == ($scope.labOrder.detail.lab_ordered_date != null);
-                // $scope.specimenCollectionDateChecked == ($scope.labOrder.detail.specimen_collection_date != null);
+        var globals = $cookies.getObject('globals');
 
 
+        $scope.signResult = function(openmrs_order) {
+            var postData = {
+                openmrs_order : openmrs_order,
+                reviewed_by_uuid     : globals.currentUser.uuid,
+                reviewed_by          : globals.currentUser.display
+            }
+            console.log(postData);
+            $http.post('/api/signResult/',postData).then(function(res){
+                    if (res.data.success) {
+                        ngNotifier.notify("Provider Review Signed succesfully");
+                        // refresh order detail here
+                        $http.get('/api/getOrderTrackingDetail/'+$scope.labOrderDetail.openmrs_order_uuid).then(function(labOrderDetail){
+                            $scope.labOrderDetail = labOrderDetail.data[0];
+                        })
+                    }
+                    else {
+                        ngNotifier.notify("Provider Review Signed failed.  Please contact technical suppport");
+                    }
+           })
+        };
 
         $scope.ok = function () {
             $modalInstance.close();

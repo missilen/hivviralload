@@ -15,7 +15,7 @@ var openmrspassword = properties.openmrspassword;
 
 exports.getShipmentVendors = function(req,res) {
     //connection.connect();
-    console.log('im here');
+    //console.log('im here');
     if(true){
         db.query('SELECT * FROM shipment_vendor',function(err,rows){
             if(err) {
@@ -102,7 +102,7 @@ exports.updateLabComment = function(req,res) {
 exports.getOrderTrackingDetail = function(req,res) {
     var quote = '"';
     var order_uuid = quote+req.params.orderUUID+quote;
-    console.log(order_uuid);
+    //console.log(order_uuid);
     if(true){
         db.query('select * from order_tracking where openmrs_order_uuid = '+order_uuid,function(err,rows){
             if(err) {
@@ -110,7 +110,7 @@ exports.getOrderTrackingDetail = function(req,res) {
             }
             else {
                 try {
-                    console.log(rows);
+               //     console.log(rows);
                     res.send(rows);
                 }
                 catch(e) {
@@ -128,9 +128,9 @@ exports.getOrderTrackingDetail = function(req,res) {
 
 
 exports.createLabOrder = function(req,res) {
-   console.log(req.body);
+   //console.log(req.body);
    var labOrderData = req.body;
-    console.log(labOrderData);
+   // console.log(labOrderData);
    var ordertypeUuid =  "52a447d3-a64a-11e3-9aeb-50e549534c5e";  // lab test order type uuid
    var concept = "129473AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"  // hiv test uuid
    var orderTemplate =  {
@@ -201,7 +201,7 @@ exports.createLabOrder = function(req,res) {
                    res.send(err);
                }
                else {
-                   console.log('my sql result ',result);
+                 //  console.log('my sql result ',result);
                    res.send(
                        {    'success':'order created',
                             'order_id': result.insertId
@@ -219,14 +219,14 @@ exports.getLocalOrders = function(req,res) {
 
     var quote = '"';
     var specimenUuid = quote+req.params.patientUUID+quote;
-    console.log(specimenUuid);
+    //console.log(specimenUuid);
     db.query("select * from order_tracking where specimen_uuid = "+specimenUuid,function(err,rows){
         if(err) {
             res.send(err);
         }
         else {
             try {
-                console.log(rows);
+             //   console.log(rows);
                 res.send(rows);
             }
             catch(e) {
@@ -253,7 +253,7 @@ exports.updateLabOrderResults = function(req,res) {
         }
         else {
             try {
-                console.log('update order result ',result);
+            //    console.log('update order result ',result);
                 res.send(
                     {    'success':'result updated',
                     }
@@ -264,7 +264,34 @@ exports.updateLabOrderResults = function(req,res) {
             }
         }
     })
-}
+};
+
+exports.signResults = function(req,res) {
+    var quote = '"';
+    var openmrs_order = quote+req.body.openmrs_order+quote;
+    var labResultData = {
+        result_observation_date : moment().format('YYYY-MM-DD HH:mm:ss'),
+        result_reviewed_by      : req.body.reviewed_by,
+        result_reviewed_by_uuid : req.body.reviewed_by_uuid
+    }
+
+    db.query("update order_tracking set ? where openmrs_order = "+ openmrs_order,[labResultData],function(err,result) {
+        if(err) {
+            console.log(err);
+            res.send(err);
+
+        }
+        else {
+          //  console.log('sql result ',result);
+            res.send(
+                {
+                    'success': 'result signed'
+                }
+            );
+        }
+    })
+};
+
 
 exports.getSession = function(req,res) {
     console.log('i was in get session');

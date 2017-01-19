@@ -25,7 +25,7 @@
     height: 32px;
     vertical-align: bottom;
     text-align: center;
-    width: 100px;
+    width: 120px;
 }
 
 .wizard-progress .step-name-wrapper {
@@ -37,9 +37,9 @@
 .wizard-progress .step-num {
     font-size: 14px;
     font-weight: bold;
-    border: 3px solid #FBE8AA;
+    border: 5px solid #FBE8AA;
     border-radius: 50%;
-    width: 18px;
+    width: 30px;
     display: inline-block;
     margin-top: 10px;
 }
@@ -47,11 +47,11 @@
 .wizard-progress .step-num:after {
     content: "";
     display: block;
-    background: #000;
-    height: 5px;
+    background: #FBE8AA;
+    height: 8px;
     width: 130px;
     position: absolute;
-    bottom: 10px;
+    bottom: 43px;
     left: 60px;
 }
 

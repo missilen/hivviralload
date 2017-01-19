@@ -42,6 +42,7 @@ app.get('/api/getLabVendors', orderTracking.getLabVendors);
   app.get('/api/getOrderTrackingDetail/:orderUUID',orderTracking.getOrderTrackingDetail);
   app.post('/api/creatLabOrder', orderTracking.createLabOrder);
   app.post('/api/updateLabOrderResults', orderTracking.updateLabOrderResults);
+  app.post('/api/signResult', orderTracking.signResults);
 
   app.get('/partials/*', function(req, res) {
     res.render('../../public/app/views/' + req.params);

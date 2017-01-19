@@ -20,8 +20,8 @@ div(ng-controller="labOrderDetailModalCtrl" style="background-color:#f2f2f2;")
              .panel.panel-default
                  .panel-heading(style="text-align:left; font-size:18px;background-color: yellow;")
                         span(ng-show="labOrderDetail.result_observation_date === null") PROVIDER/DOCTOR:  Please review and sign lab results
-                        span(ng-show="labOrderDetail.result_observation_date !== null") Lab Results Reviewed by {{}} on {{labOrderDetail.result_observation_date | date : 'MM/dd/yyyy' }}
-                        button.btn.btn-success.sign-button(type="button" ng-click="signResult(labOrderDetail.openmrs_order_uuid)" ng-disabled="labOrderDetail.lab_results === null" ng-show="labOrderDetail.result_observation_date === null") Sign
+                        span(ng-show="labOrderDetail.result_observation_date !== null") Lab Results Reviewed by {{labOrderDetail.result_reviewed_by}} on {{labOrderDetail.result_observation_date | date : 'MM/dd/yyyy hh:mm' }}
+                        button.btn.btn-success.sign-button(type="button" ng-click="signResult(labOrderDetail.openmrs_order)" ng-disabled="labOrderDetail.lab_results === null" ng-show="labOrderDetail.result_observation_date === null") Sign
       .row
         .col-lg-4.col-md-4.col-lg-4
             .panel.panel-default
@@ -89,30 +89,33 @@ div(ng-controller="labOrderDetailModalCtrl" style="background-color:#f2f2f2;")
                               span.step-num 2
                               span.step-name {{labOrderDetail.specimen_collection_date | date : 'MM/dd/yyyy'}}
                           li(ng-class ="{'active-step' : labOrderDetail.ship_to_lab_date != null}")
-                              span.step-name
-                                  | Step 3
+                              span.step-name Carrier Picked Up
                               span.visuallyhidden Step
                               span.step-num 3
+                              span.step-name {{labOrderDetail.ship_to_lab_date | date : 'MM/dd/yyyy'}}
                           li(ng-class ="{'active-step' : labOrderDetail.lab_received_date != null}")
                               span.step-name
-                                  | Step 4
+                                  | Delivered to Lab
                               span.visuallyhidden Step
                               span.step-num 4
+                              span.step-name {{labOrderDetail.lab_received_date | date : 'MM/dd/yyyy'}}
                           li(ng-class ="{'active-step' : labOrderDetail.lab_processed_date != null}")
                               span.step-name
-                                  | Step 5
+                                  | Processed Date
                               span.visuallyhidden Step
                               span.step-num 5
+                              span.step-name {{labOrderDetail.lab_processed_date | date : 'MM/dd/yyyy'}}
                           li(ng-class ="{'active-step' : labOrderDetail.lab_returned_date != null}")
                               span.step-name
-                                  | Step 6
+                                  | Results Delivered
                               span.visuallyhidden Step
                               span.step-num 6
+                              span.step-name {{labOrderDetail.lab_returned_date | date : 'MM/dd/yyyy'}}
                           li(ng-class ="{'active-step' : labOrderDetail.result_observation_date != null}")
                               span.step-name
-                                  | Step 7
+                                  | Provider Reviewed
                               span.visuallyhidden Step
                               span.step-num 7
-
+                              span.step-name {{labOrderDetail.result_observation_date | date : 'MM/dd/yyyy'}}
 
 
