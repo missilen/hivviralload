@@ -31,7 +31,9 @@ html(lang="en" ng-app="app")
                     span.app-title HIV Viral Load
                     span Monitoring System
                 .userDisplay
-                    | Welcome, {{$rootscope.global.user.person.display}}
+                    | Welcome, {{currentUser.person.display}}
+                    br
+                    | System : {{currentUser.systemId}}
                 // Top Menu Items
                 // Sidebar Menu Items - These collapse to the responsive navigation menu on small screens
                 .collapse.navbar-collapse.navbar-ex1-collapse.ng-cloak
@@ -44,15 +46,15 @@ html(lang="en" ng-app="app")
 
                         li.side-nav-main-tab
                         li.taskList
-                            a.taskLinkColor(ng-href='/dashboard')
+                            a.taskLinkColor(ng-href='/#/')
                                 i.fa.fa-list-ul(aria-hidden='true')
                                 | &nbspPatient List
                         li.taksList
-                            a(ng-href='/tasks')
+                            a(ng-href='/#/dashboard/tasks')
                                 i.fa.fa-check-square-o(aria-hidden='true')
                                 | &nbspTasks
                         li.taskList
-                            a(ng-href='/reports')
+                            a(ng-href='/#/dashboard/reports')
                                 i.fa.fa-file-text-o(aria-hidden='true')
                                 | &nbspReports
                             br

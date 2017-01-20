@@ -39,8 +39,7 @@ var hivViralApp = angular.module('app', [
 
 
 //to prevent IE caching
-hivViralApp.config([
-    '$httpProvider','$logProvider', function ($httpProvider,$logProvider) {
+hivViralApp.config(['$httpProvider','$logProvider', function ($httpProvider,$logProvider) {
          $logProvider.debugEnabled(false);
         // Initialize get if not there
         if (!$httpProvider.defaults.headers.get) {
@@ -60,15 +59,15 @@ hivViralApp.config(['$routeProvider', '$locationProvider',
     $routeProvider.
     when('/dashboard', {
         templateUrl : '/partials/patientDashboard',
-        controller  : 'dashCtrl',
+        controller  : 'dashCtrl'
     }).
-    when('/tasks', {
+    when('/dashboard/tasks', {
         templateUrl : '/partials/tasks',
-        controller  : 'tasksCtrl',
+        controller  : 'tasksCtrl'
     }).
-    when('/reports', {
+    when('/dashboard/reports', {
         templateUrl : '/partials/reports',
-        controller  : 'reportsCtrl',
+        controller  : 'reportsCtrl'
     }).
     // when('/admin', {
     //     templateUrl: '/partials/admin',
@@ -151,7 +150,7 @@ hivViralApp.config(['$routeProvider', '$locationProvider',
 //             })
 //
 //     }]);
-angular.module('app').run(function($rootScope,$location,$cookies) {
+angular.module('app').run(function($rootScope,$location) {
   $rootScope.$on('$routeChangeError', function(evt,current, previous,rejection) {
     if(rejection === 'not authorized'){
       $location.path('/login');

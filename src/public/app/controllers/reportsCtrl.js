@@ -1,4 +1,4 @@
-hivViralApp.controller('tasksCtrl', ['$scope', '$rootScope','$modal','$routeParams','$http','ngIdentity','$log','$filter','$window','$route','ngPatient','$cookies','ngNotifier','$timeout', function($scope,$rootScope, $modal,$routeParams,$http,ngIdentity,$log,$filter,$window,$route,ngPatient,$cookies,ngNotifier,$timeout) {
+hivViralApp.controller('reportsCtrl', ['$scope', '$rootScope','$modal','$routeParams','$http','ngIdentity','$log','$filter','$window','$route','ngPatient','$cookies','ngNotifier','$timeout', function($scope,$rootScope, $modal,$routeParams,$http,ngIdentity,$log,$filter,$window,$route,ngPatient,$cookies,ngNotifier,$timeout) {
 $("body").css("background-color", "#f7f7f7;");
 $scope.identity = ngIdentity;
 $scope.$parent.activeMenu='dashboard';
@@ -19,9 +19,9 @@ $scope.medications = [];
 
 
 
-  $http.get('/api/getOutstandingOrders').then(function(res){
+  $http.get('/api/getPatientList').then(function(res){
       if (res.data){
-          $scope.orderList = res.data;
+          $scope.patientList = res.data;
           // res.data.forEach(function(patient) {
           //         $scope.patientList.push({
           //             patientId: patient.display.split('-')[0].trim(),
@@ -34,8 +34,8 @@ $scope.medications = [];
           //     });
 
 
-          //console.log($scope.orderList);
-          $scope.totalOrders = $scope.orderList.length;
+          //          console.log($scope.patientList);
+          $scope.totalPatients = $scope.patientList.length;
       }
   })
 
@@ -188,7 +188,6 @@ function compareDesc(a,b) {
   };
 
   $scope.viewOrderDetail = function(labOrder) {
-      console.log(labOrder);
       var modalInstance = $modal.open({
           templateUrl: '/partials/labOrderDetailModal',
           controller: labOrderDetailModalCtrl,
@@ -204,14 +203,14 @@ function compareDesc(a,b) {
     };
 
   var labOrderDetailModalCtrl = function($scope,$modalInstance,labOrder){
-      $scope.labOrderDetail = labOrder;
-      // $http.get('/api/getOrderTrackingDetail/'+labOrder.uuid).then(function(result2){
-      //         if (!result2.error) {
-      //              $scope.labOrderDetail = result2.data[0];
-      //              // $scope.labOrderDateChecked == ($scope.labOrder.detail.lab_ordered_date != null);
-      //              // $scope.specimenCollectionDateChecked == ($scope.labOrder.detail.specimen_collection_date != null);
-      //          }
-      // });
+      $scope.labOrder = labOrder;
+      $http.get('/api/getOrderTrackingDetail/'+labOrder.uuid).then(function(result2){
+              if (!result2.error) {
+                   $scope.labOrderDetail = result2.data[0];
+                   // $scope.labOrderDateChecked == ($scope.labOrder.detail.lab_ordered_date != null);
+                   // $scope.specimenCollectionDateChecked == ($scope.labOrder.detail.specimen_collection_date != null);
+               }
+      });
 
       $scope.updateLabResult = function(orderUUId){
           console.log(' i am trying to update lab results');
@@ -333,6 +332,17 @@ function getNodeCount(document) {
         return nodeCount;
     };
 
+function getProviderId(currentUser) {
+
+    // var providerId = null;
+    // console.log('current user ',currentUser);
+    // currentUser.roles.forEach(function(role){
+    //     if (role.display =='Provider'){
+    //         providerId = role.uuid;
+    //     }
+    // })
+    return 1;  // dummy for now
+}
 
 // // pagination functions
 // $scope.$watch('$parent.searchText', function (searchText) {
@@ -356,7 +366,7 @@ function getNodeCount(document) {
 //  });
 
 $scope.pageCount = function () {
-    return Math.ceil($scope.totalOrders / $scope.itemsPerPage);
+    return Math.ceil($scope.totalPatients / $scope.itemsPerPage);
   };
 
 $scope.setPage = function (pageNo) {
@@ -369,5 +379,24 @@ $scope.pageChanged = function(searchText) {
     //$scope.filteredInstances = $filter('searchAll')($scope.instances,searchText).slice(beginItem,endItem);
   };
 
+$scope.deleteActive = function (activeInstance) {
+  // delete the passed in draft instance
+    var createdDate = $filter('date')(activeInstance.dateCreated,'MM/dd/yyyy - hh:mm:ss');
+    var deleteConfirm = $window.confirm('Are you sure you want to delete active instance: ' + activeInstance.eventName +' created on ' + createdDate + '? ');
+
+    if (deleteConfirm) {
+      
+       $http.post('/api/events/active/delete/'+activeInstance._id).then(function(res){
+       if(res.data) {
+            // delete success
+            $route.reload();
+         } 
+         else {
+             alert('delete failed');
+         }
+    });
+         
+    }
+    };
 }]);
 

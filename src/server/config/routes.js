@@ -40,6 +40,7 @@ app.get('/api/getLabVendors', orderTracking.getLabVendors);
   app.get('/api/getPatientAppointments/:patientUUID',patientServices.getPatientAppointments);
   app.get('/api/getOpenmrsOrderDetail/:orderUUID',patientServices.getOrderDetail);
   app.get('/api/getOrderTrackingDetail/:orderUUID',orderTracking.getOrderTrackingDetail);
+  app.get('/api/getOutstandingOrders', orderTracking.getOutstandingOrders);
   app.post('/api/creatLabOrder', orderTracking.createLabOrder);
   app.post('/api/updateLabOrderResults', orderTracking.updateLabOrderResults);
   app.post('/api/signResult', orderTracking.signResults);

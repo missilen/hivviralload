@@ -5,8 +5,15 @@ var rootUrl = paths.openmrsPath;
 
 
 exports.authenticateUser = function(req, res, next) {
-  console.log('req body',req.body);
-  var options_auth = { user: req.body.username, password:req.body.password };
+ // console.log('req body',req.body);
+  var options_auth = {
+      user: req.body.username,
+      password:req.body.password,
+      mimetypes: {
+          json: ["application/json", "application/json;charset=utf-8"],
+          xml: ["application/xml", "application/xml;charset=utf-8"]
+      }
+  };
   var client = new restClient(options_auth);
     var service = 'ws/rest/v1/session';
     var urlResource = rootUrl+service;
@@ -15,8 +22,11 @@ exports.authenticateUser = function(req, res, next) {
             res.send({success:false})
         }
         else {
-            console.log(data);
+
+            console.log('returned data ', data);
+
             if (data.authenticated) {
+
                 res.send({success: true, authenticateData: data})
             }
             else {

@@ -1,7 +1,7 @@
 hivViralApp.controller('dashCtrl', ['$scope', '$rootScope','$modal','$routeParams','$http','ngIdentity','$log','$filter','$window','$route','ngPatient','$cookies','ngNotifier','$timeout', function($scope,$rootScope, $modal,$routeParams,$http,ngIdentity,$log,$filter,$window,$route,ngPatient,$cookies,ngNotifier,$timeout) {
 $("body").css("background-color", "#f7f7f7;");
 $scope.identity = ngIdentity;
-$scope.$parent.activeMenu='dashboard';
+//$scope.$parent.activeMenu='dashboard';
 // set default sort column and direction;
 $scope.sortReverse=false;
 $scope.sortType = "dateCreated";
@@ -121,12 +121,13 @@ function compareDesc(a,b) {
           encounterData.forEach(function (encounter) {
 
 
-              if (encounter.encounterType.uuid == 'dd2fdfa5-31ea-4686-b5f3-0d078d63e87d'){
+              if (encounter.encounterType.display == 'HIV Viral Load Monitoring'){
                   $scope.patientInstance.hivEncounters.push(encounter);
                   $scope.patientInstance.providerId =   encounter.encounterProviders[0].provider.uuid;
-                  console.log('one encounter ', encounter);
+              //    console.log('one encounter ', encounter);
               }
               encounter.obs.forEach(function(ob){
+                //  console.log('obs ', ob);
                   if (ob.concept.uuid === '159947AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA') {
                       ob.groupMembers.forEach(function(member) {
                           if (member.concept.uuid === "1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"){
@@ -191,33 +192,33 @@ function compareDesc(a,b) {
       })
     };
 
-  // var labOrderDetailModalCtrl = function($scope,$modalInstance,labOrder){
-  //     $scope.labOrder = labOrder;
-  //     $scope.resultHigh = false;
-  //
-  //     $http.get('/api/getOrderTrackingDetail/'+labOrder.uuid).then(function(result2){
-  //             if (!result2.error) {
-  //                  $scope.labOrderDetail = result2.data[0];
-  //                  $scope.resultHigh = $scope.labOrderDetail.lab_results >= 450;
-  //                  //console.log($scope.labOrderDetail);
-  //                  // $scope.labOrderDateChecked == ($scope.labOrder.detail.lab_ordered_date != null);
-  //                  // $scope.specimenCollectionDateChecked == ($scope.labOrder.detail.specimen_collection_date != null);
-  //              }
-  //     });
-  //
-  //     $scope.updateLabResult = function(orderUUId){
-  //         console.log(' i am trying to update lab results');
-  //     }
-  //
-  //     $scope.ok = function () {
-  //         $modalInstance.close();
-  //
-  //     };
-  //
-  //     $scope.cancel = function () {
-  //         $modalInstance.dismiss();
-  //     };
-  // };
+  var labOrderDetailModalCtrl = function($scope,$modalInstance,labOrder){
+      $scope.labOrder = labOrder;
+      $scope.resultHigh = false;
+
+      $http.get('/api/getOrderTrackingDetail/'+labOrder.uuid).then(function(result2){
+              if (!result2.error) {
+                   $scope.labOrderDetail = result2.data[0];
+                   $scope.resultHigh = $scope.labOrderDetail.lab_results >= 450;
+                   //console.log($scope.labOrderDetail);
+                   // $scope.labOrderDateChecked == ($scope.labOrder.detail.lab_ordered_date != null);
+                   // $scope.specimenCollectionDateChecked == ($scope.labOrder.detail.specimen_collection_date != null);
+               }
+      });
+
+      $scope.updateLabResult = function(orderUUId){
+          console.log(' i am trying to update lab results');
+      }
+
+      $scope.ok = function () {
+          $modalInstance.close();
+
+      };
+
+      $scope.cancel = function () {
+          $modalInstance.dismiss();
+      };
+  };
     var labOrderDetailModalCtrl = function($scope,$modalInstance,$cookies){
         $scope.resultHigh = false;
         $scope.resultHigh = $scope.labOrderDetail.lab_results >= 450;

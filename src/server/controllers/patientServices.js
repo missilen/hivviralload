@@ -10,9 +10,11 @@ var paths = require('../config/config')
 var restClient = require('node-rest-client').Client;
 
 
+
 var rootUrl = paths.openmrsPath;
 var openmrsuser =  properties.openmrsuser;
 var openmrspassword = properties.openmrspassword;
+var remoteSystemSetting = getSystemProperties(rootUrl);
 
 exports.getCareSettings = function(req,res) {
     var currentSession = req.session;
@@ -33,9 +35,12 @@ exports.getPatientList = function(req,res) {
     //  this api get list of all patient with hiv viral load encounter
     var globals = JSON.parse(req.cookies.globals);
     var currentSession = req.session;
+    //console.log('current session ', req.session);
+
     var options_auth = { user: openmrsuser, password: openmrspassword };
     var client = new restClient(options_auth);
-    var querystr =  properties.hivCohortUUID+'/member';
+    var querystr =  remoteSystemSetting.hivCohortUUID+'/member';
+
     var service = 'ws/rest/v1/cohort/';
     var urlResource = rootUrl+service+querystr;
     var patientList =[];
@@ -143,6 +148,7 @@ exports.getPatientOrders = function(req,res) {  // this version pull order from 
         }
     })
 };
+
 exports.getOrderDetail = function(req,res) {
     var options_auth = { user: openmrsuser, password: openmrspassword };
     var client = new restClient(options_auth);
@@ -172,6 +178,23 @@ exports.getPatientDrugs = function(req,res){
     var urlResource = rootUrl+service+querystr;
 
 
+};
+
+exports.searchPatient = function(req,res) {
+    var options_auth = { user: openmrsuser, password: openmrspassword };
+    var client = new restClient(options_auth);
+    var querystr = '?q='+req.params.searchString+'&v=full';
+    var service = 'ws/rest/v1/patient/';
+    var urlResource = rootUrl+service+querystr;
+    client.get(urlResource, function(data,response){
+        //  console.log(data);
+        if (data.error) {
+            res.send({'error': data.error.code});
+        }
+        else {
+            res.send(data);
+        }
+    })
 }
 
 
@@ -192,4 +215,23 @@ function getPatientDetail(patientUUID) {
 
     });
 
+}
+
+function getSystemProperties(systemName) {
+    var foundSystem = null;
+    var defaultSystem = null;
+    properties.openmrs_systems.forEach(function(system) {
+        if (system.systemId == systemName) {
+             foundSystem = system;
+        }
+        if (system.systemId == 'default') {
+            defaultSystem = system;
+
+        }
+    });
+    if (foundSystem === undefined) {
+        foundSystem = defaultSystem;
+        console.log('using default system');
+    }
+    return foundSystem;
 }

@@ -48,7 +48,7 @@ angular.module('app').controller('homeController',function($scope,$http,$state,$
             }
     })
 
-    $scope.sortPatient = function(sortType) {
+    $scope.sortOrder = function(sortType) {
         if($scope.sortReverse)
         {
             $scope.patientList.sort(compareAsc);

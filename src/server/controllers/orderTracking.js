@@ -11,6 +11,8 @@ var moment = require('moment');
 var rootUrl = paths.openmrsPath;
 var openmrsuser =  properties.openmrsuser;
 var openmrspassword = properties.openmrspassword;
+var remoteSystemSetting = getSystemProperties(rootUrl);
+
 
 
 exports.getShipmentVendors = function(req,res) {
@@ -129,16 +131,19 @@ exports.getOrderTrackingDetail = function(req,res) {
 
 exports.createLabOrder = function(req,res) {
    //console.log(req.body);
+
    var labOrderData = req.body;
-   // console.log(labOrderData);
-   var ordertypeUuid =  "52a447d3-a64a-11e3-9aeb-50e549534c5e";  // lab test order type uuid
-   var concept = "129473AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"  // hiv test uuid
+    console.log(labOrderData);
+
+   var ordertypeUuid =  remoteSystemSetting.orderTypeUUID;  // lab test order type uuid
+   var concept = remoteSystemSetting.CD4;  // hiv test uuid
    var orderTemplate =  {
         "type": "testorder",
         "patient": labOrderData.patient,
-        "concept": "129473AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",  // hiv test uuid,
+       // "concept": "129473AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",  // hiv test uuid,
+       "concept": concept,  // hiv test uuid,
         "encounter": labOrderData.encounter, // orders must have an encounter
-        "orderer"    : "927b7e20-f53d-4c3d-9377-198a1d1b76ac", // default provider uuid  need to be dynamic
+        "orderer"    : labOrderData.provider , // default provider uuid  need to be dynamic
         "careSetting": "6f0c9a92-6f24-11e3-af88-005056821db0", // outpatient caresetting uuid from the caresetting resource
         "specimenSource" : "blood",
         "commentToFulfiller": labOrderData.comment,
@@ -234,7 +239,7 @@ exports.getLocalOrders = function(req,res) {
             }
         }
     })
-}
+};
 
 exports.updateLabOrderResults = function(req,res) {
     var labResultData = req.body.labResultData;
@@ -292,6 +297,19 @@ exports.signResults = function(req,res) {
     })
 };
 
+exports.getOutstandingOrders = function(req,res) {
+    db.query("select * from order_tracking where result_observation_date is null",function(err,rows) {
+        if(err) {
+            console.log(err);
+            res.send(err);
+
+        }
+        else {
+            //  console.log('sql result ',result);
+            res.send(rows);
+        }
+    })
+}
 
 exports.getSession = function(req,res) {
     console.log('i was in get session');
@@ -309,3 +327,22 @@ exports.getSession = function(req,res) {
 
 
 };
+
+function getSystemProperties(systemName) {
+    var foundSystem = null;
+    var defaultSystem = null;
+    properties.openmrs_systems.forEach(function(system) {
+        if (system.systemId == systemName) {
+            foundSystem = system;
+        }
+        if (system.systemId == 'default') {
+            defaultSystem = system;
+
+        }
+    });
+    if (foundSystem === undefined) {
+        foundSystem = defaultSystem;
+        console.log('using default system');
+    }
+    return foundSystem;
+}

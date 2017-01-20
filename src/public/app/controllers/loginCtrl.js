@@ -1,6 +1,6 @@
-angular.module('app').controller('loginCtrl',function($scope,$http,ngIdentity,ngNotifier,ngAuth,$location,$window,$log,ngOpenMRSAuth){
+angular.module('app').controller('loginCtrl',function($rootScope,$scope,$http,ngIdentity,ngNotifier,ngAuth,$location,$window,$log,ngOpenMRSAuth,$cookies){
 	$scope.identity = ngIdentity;
-	
+
 	if($scope.identity.isAuthenticated()) {
 		$location.path('/');
 	}
@@ -9,9 +9,10 @@ angular.module('app').controller('loginCtrl',function($scope,$http,ngIdentity,ng
             console.log('success ',success);
             if(success) {
                 if(success.currentUser){
-                    ngIdentity.currentUser = success.currentUser;
-                    console.log(ngIdentity.currentUser);
-                    $location.path('/dashboard');
+                    $rootScope.currentUser = success.currentUser;
+                    $rootScope.identity = $cookies.getObject('globals');
+          //          console.log($rootScope.currentUser);
+                    $location.path('/');
                 }
                 // } else if ($scope.identity.currentUser.isLevelOne()) {  //Comment out admin route for now, until we decide if we need an admin role.
                 // 	//TODO: admin route
