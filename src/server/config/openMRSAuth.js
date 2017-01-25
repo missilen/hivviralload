@@ -26,7 +26,7 @@ exports.authenticateUser = function(req, res, next) {
             console.log('returned data ', data);
 
             if (data.authenticated) {
-
+                data.systemId = rootUrl.split('http://')[1].split('/')[0];
                 res.send({success: true, authenticateData: data})
             }
             else {

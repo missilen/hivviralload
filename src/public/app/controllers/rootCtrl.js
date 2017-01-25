@@ -3,10 +3,10 @@ hivViralApp.controller('rootCtrl', ['$scope', '$rootScope','$modal','$routeParam
 $("#wrapper").show();
 
 $scope.searchText='';
-$scope.identity = $cookies.getObject('globals');
+//$scope.identity = $cookies.getObject('globals');
 
-if ($scope.identity)  {
-        if($scope.identity.currentUser === undefined){  //changed background color based on authenticated or not
+if ($rootScope.identity)  {
+        if($rootScope.identity.currentUser === undefined){  //changed background color based on authenticated or not
             $("body").css("background-color", "#2a2d33;");
             $location.path( "/login" );
         }

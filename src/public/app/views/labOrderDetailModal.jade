@@ -26,18 +26,74 @@ div(ng-controller="labOrderDetailModalCtrl" style="background-color:#f2f2f2;")
         .col-lg-4.col-md-4.col-lg-4
             .panel.panel-default
                 .panel-heading(style="text-align:left; font-size:18px;")
-                    | Specimen Info
+                    |Specimen Info
                 .panel-body
-                    | {{labOrderDetail.specimen_name }}
+                    span(style="font-weight:bold") Specimen ID:
+                    .result-value {{labOrderDetail.specimen_id}}
+                    br
+                    span(style="font-weight:bold")  Doctor:
+                    br
+                    span(style="font-weight:bold")  Purpose:
+                    br
+                    span(style="font-weight:bold")  Date blood drawn:
+                    .result-value {{labOrderDetail.specimen_collection_date | date : 'MM/dd/yyyy' }}
+                    br
+                    span(style="font-weight:bold")  Location drawn:
+                    br
+                    span(style="font-weight:bold")  Vile type:
 
         .col-lg-4.col-md-4.col-lg-4
             .panel.panel-default
                 .panel-heading(style="text-align:left; font-size:18px;")
-                    | Shipment Info
-        .col-lg-4.col-md-4.col-lg-4
+                    i.fa.fa-truck(aria-hidden='true' style="color:blue")
+                    |  Shipment Info
+                    a(ng-href='' ng-click="updateShipmentInfo(labOrderDetail.openmrs_order_uuid)")
+                        i.fa.fa-edit(style="float:right" aria-hidden="true")
+                .panel-body
+                    span(style="font-weight:bold") Carrier:
+                    .result-value  {{labOrderDetail.shipper_name}}
+                    br
+                    span(style="font-weight:bold") Pickup Date:
+                    |{{labOrderDetail.ship_to_lab_date | date : 'MM/dd/yyyy'}}
+                    br
+                    span(style="font-weight:bold") Shipping Method:
+                    |{{}}
+                    br
+                    span(style="font-weight:bold") Delivery Address:
+                    br
+                    |{{labOrderDetail.lab_address1}}
+                    br
+                    |{{labOrderDetail.lab_address2}}
+                    br
+                    |{{labOrderDetail.lab_city}} {{labOrderDetail.lab_state}}  {{labOrderDetail.lab_zipcode}}
+                    br
+                    span(style="font-weight:bold") Delivered Date:
+                    br
+                    |{{labOrderDetail.lab_received_date}}
+          .col-lg-4.col-md-4.col-lg-4
             .panel.panel-default
                 .panel-heading(style="text-align:left; font-size:18px;")
-                    | Lab Info
+                    i.fa.fa-flask(aria-hidden='true' style="color:blue")
+                    |  Lab Info
+                    a(ng-href='' ng-click="updateLabInfo(labOrderDetail.openmrs_order_uuid)")
+                        i.fa.fa-edit(style="float:right" aria-hidden="true")
+                .panel-body
+                    span(style="font-weight:bold") Lab Name:
+                    .result-value {{labOrderDetail.lab_name}}
+                    br
+                    span(style="font-weight:bold") Delivered Date
+                    .result-value {{}}
+                    br
+                    span(style="font-weight:bold") Signed By:
+                    | {{}}
+                    br
+                    span(style="font-weight:bold") Processed Date:
+                    |{{labOrderDetail.lab_processed_date | date : 'MM/dd/yyyy' }}
+                    br
+                    span(style="font-weight:bold") Processed By
+                    |{{labOrderDetail.lab_processed_by}}
+                    br
+
       .row
         .col-lg-4
             .panel.panel-default

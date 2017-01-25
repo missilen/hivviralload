@@ -106,7 +106,7 @@ exports.getOrderTrackingDetail = function(req,res) {
     var order_uuid = quote+req.params.orderUUID+quote;
     //console.log(order_uuid);
     if(true){
-        db.query('select * from order_tracking where openmrs_order_uuid = '+order_uuid,function(err,rows){
+        db.query('select o.*, s.*, l.*  from order_tracking o left join shipment_vendor s on o.shiper_id = s.shipper_id left join lab_vendor l on o.lab_id = l.lab_id where openmrs_order_uuid = '+order_uuid,function(err,rows){
             if(err) {
                 res.send(err);
             }
@@ -225,7 +225,7 @@ exports.getLocalOrders = function(req,res) {
     var quote = '"';
     var specimenUuid = quote+req.params.patientUUID+quote;
     //console.log(specimenUuid);
-    db.query("select * from order_tracking where specimen_uuid = "+specimenUuid,function(err,rows){
+    db.query("select o.*, s.*, l.*  from order_tracking o left join shipment_vendor s on o.shipper_id = s.shipper_id left join lab_vendor l on o.lab_id = l.lab_id where specimen_uuid = "+specimenUuid,function(err,rows){
         if(err) {
             res.send(err);
         }
@@ -250,6 +250,11 @@ exports.updateLabOrderResults = function(req,res) {
     labResultData.specimen_collection_date = moment(labResultData.specimen_collection_date).format('YYYY-MM-DD HH:mm:ss');
     labResultData.lab_processed_date = moment(labResultData.lab_processed_date).format('YYYY-MM-DD HH:mm:ss');
     labResultData.lab_returned_date = moment().format('YYYY-MM-DD HH:mm:ss');
+    // create / update observation with the result
+    var options_auth = { user: openmrsuser, password: openmrspassword };
+    var client = new restClient(options_auth);
+    var service = 'ws/rest/v1/order';
+    var urlResource = rootUrl+service;
     db.query("update order_tracking set ? where openmrs_order = "+openmrs_order,[labResultData],function(err,result) {
         if(err) {
             console.log(err);

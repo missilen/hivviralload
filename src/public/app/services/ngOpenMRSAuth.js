@@ -37,8 +37,7 @@ angular.module('app').factory('ngOpenMRSAuth', function($location, $http, $base6
                     currentUser: response.data.authenticateData.user,
                     sessionId : response.data.authenticateData.sessionId,
                     authenticated : response.data.authenticateData.authenticated,
-                    systemId      : response.data.systemId
-
+                    systemId      : response.data.authenticateData.systemId
                 };
                 $rootScope.globals = globals;
                 $cookies.putObject('globals', globals);

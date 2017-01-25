@@ -12,7 +12,7 @@ module.exports = {
     SSL_BUNDLE: './server/utilities/gd_bundle-g2.crt',
     openmrsuser : 'Admin',
     openmrspassword : 'Admin123',
-    openmrs_systems  :[
+    openmrs_systems : [
         {
             systemId        : "http://lvsopenmrs2.lab.local:8081/openmrs-standalone/",
             hivCohortUUID   : "95e6dbeb-6701-4b4f-a400-2f8896203656",

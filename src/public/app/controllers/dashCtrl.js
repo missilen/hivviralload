@@ -192,33 +192,33 @@ function compareDesc(a,b) {
       })
     };
 
-  var labOrderDetailModalCtrl = function($scope,$modalInstance,labOrder){
-      $scope.labOrder = labOrder;
-      $scope.resultHigh = false;
-
-      $http.get('/api/getOrderTrackingDetail/'+labOrder.uuid).then(function(result2){
-              if (!result2.error) {
-                   $scope.labOrderDetail = result2.data[0];
-                   $scope.resultHigh = $scope.labOrderDetail.lab_results >= 450;
-                   //console.log($scope.labOrderDetail);
-                   // $scope.labOrderDateChecked == ($scope.labOrder.detail.lab_ordered_date != null);
-                   // $scope.specimenCollectionDateChecked == ($scope.labOrder.detail.specimen_collection_date != null);
-               }
-      });
-
-      $scope.updateLabResult = function(orderUUId){
-          console.log(' i am trying to update lab results');
-      }
-
-      $scope.ok = function () {
-          $modalInstance.close();
-
-      };
-
-      $scope.cancel = function () {
-          $modalInstance.dismiss();
-      };
-  };
+  // var labOrderDetailModalCtrl = function($scope,$modalInstance,labOrder){
+  //     $scope.labOrder = labOrder;
+  //     $scope.resultHigh = false;
+  //
+  //     $http.get('/api/getOrderTrackingDetail/'+labOrder.uuid).then(function(result2){
+  //             if (!result2.error) {
+  //                  $scope.labOrderDetail = result2.data[0];
+  //                  $scope.resultHigh = $scope.labOrderDetail.lab_results >= 450;
+  //                  console.log($scope.labOrderDetail);
+  //                  // $scope.labOrderDateChecked == ($scope.labOrder.detail.lab_ordered_date != null);
+  //                  // $scope.specimenCollectionDateChecked == ($scope.labOrder.detail.specimen_collection_date != null);
+  //              }
+  //     });
+  //
+  //     $scope.updateLabResult = function(orderUUId){
+  //         console.log(' i am trying to update lab results');
+  //     }
+  //
+  //     $scope.ok = function () {
+  //         $modalInstance.close();
+  //
+  //     };
+  //
+  //     $scope.cancel = function () {
+  //         $modalInstance.dismiss();
+  //     };
+  // };
     var labOrderDetailModalCtrl = function($scope,$modalInstance,$cookies){
         $scope.resultHigh = false;
         $scope.resultHigh = $scope.labOrderDetail.lab_results >= 450;
