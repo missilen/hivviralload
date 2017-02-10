@@ -21,6 +21,10 @@ if ($rootScope.identity)  {
     }
 
 
+    $scope.searchPatient = function(searchText) {
+
+    };
+
     $scope.updateLabResults = function(labOrder){
         $scope.labOrder = labOrder;
         var modalInstance = $modal.open({
